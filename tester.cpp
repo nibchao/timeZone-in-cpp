@@ -1,32 +1,36 @@
 #include <iostream>
 #include <string>
+#include "timeMethods.h"
 
 using namespace std;
 
 int menu();
-void storeTime();
-string storeZone();
-void convert();
+int validHours();
+int validMinutes();
+string validZone();
 
 int main()
 {
 	int response = 0;
-	string zoneName = "";
+	int hours = 0;
+	int minutes = 0;
+	string zone = "";
+	timeMethods time;
 	do
 	{
 		response = menu();
 		switch (response)
 		{
 		case 1:
-			storeTime();
-			zoneName = storeZone();
-			cout << "The time zone for your inputted time is: " << zoneName << endl;
+			hours = validHours();
+			minutes = validMinutes();
+			zone = validZone();
+			time.storeTime(hours, minutes, zone);
 			break;
 		case 2:
-			convert();
 			break;
 		case 3:
-			cout << "Quitting.";
+			cout << "Exiting program.";
 			break;
 		default:
 			cout << endl << "Input out of bounds. Enter any key to return." << endl;
@@ -42,9 +46,9 @@ int menu()
 {
 	int response = 0;
 
-	cout << "1. Input a time to convert" << endl;
+	cout << "1. Store a time" << endl;
 	cout << "2. Convert a time to a specific time zone" << endl;
-	cout << "3. Quit" << endl;
+	cout << "3. Exit" << endl;
 
 	cout << endl << "Enter your input: ";
 	cin >> response;
@@ -53,27 +57,55 @@ int menu()
 	return response;
 }
 
-void storeTime()
+int validHours()
 {
 	int hours = 0;
-	int minutes = 0;
-	char c = ' ';
-	cout << "Enter time: ";
-	cin >> hours >> c >> minutes;
+	cout << "Enter hours: ";
+	cin >> hours;
 	cin.clear();
 	cin.ignore(10000, '\n');
-	cout << endl << hours << ":" << minutes << endl;
+
+	while (hours < 0)
+	{
+		cout << endl << "Error: A negative value was found for hours. No negative time values allowed." << endl;
+		cout << endl << "Enter hours: ";
+		cin >> hours;
+		cin.clear();
+		cin.ignore(10000, '\n');
+	}
+	return hours;
 }
 
-string storeZone()
+int validMinutes()
+{
+	int minutes = 0;
+	cout << "Enter minutes: ";
+	cin >> minutes;
+	cin.clear();
+	cin.ignore(10000, '\n');
+
+	while (minutes < 0)
+	{
+		cout << endl << "Error: A negative value was found for minutes. No negative time values allowed." << endl;
+		cout << endl << "Enter minutes: ";
+		cin >> minutes;
+		cin.clear();
+		cin.ignore(10000, '\n');
+	}
+	return minutes;
+}
+
+string validZone()
 {
 	string zoneName = "";
-	cout << "Enter time zone: ";
+	cout << "Enter time zone abbreviation: ";
 	getline(cin, zoneName);
+
+	while (zoneName == "" || zoneName.find_first_not_of(' ') || zoneName.length() > 4)
+	{
+		cout << endl << "Error: Time zone name is too long (maximum of 4 characters) or blank characters were found." << endl;
+		cout << endl << "Enter time zone abbrevation: ";
+		getline(cin, zoneName);
+	}
 	return zoneName;
-}
-
-void convert()
-{
-
 }
