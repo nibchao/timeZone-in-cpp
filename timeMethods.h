@@ -29,6 +29,9 @@ public:
 	~timeMethods();
 
 	void storeTime(int, int, string);
-	void convert();
+	void deleteTime(int, int);
+	void displayStoredTimes() const;
+	void convertToUTC(int, int, string);
+	void convertUTCtoOther(int, int, string);
 };
 #endif

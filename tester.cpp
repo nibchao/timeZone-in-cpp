@@ -8,6 +8,7 @@ int menu();
 int validHours();
 int validMinutes();
 string validZone();
+bool confirmDelete();
 
 int main()
 {
@@ -30,7 +31,25 @@ int main()
 		case 2:
 			break;
 		case 3:
+			break;
+		case 4:
+			cout << endl << "Displaying the stored times:" << endl;
+			time.displayStoredTimes();
+			cout << endl;
+			break;
+		case 5:
 			cout << "Exiting program.";
+			break;
+		case 10:
+			if (confirmDelete() == true)
+			{
+				time.~timeMethods();
+				cout << endl << "Deleted ALL stored times." << endl << endl;
+			}
+			else
+			{
+				cout << endl << "Deletion was canceled." << endl << endl;
+			}
 			break;
 		default:
 			cout << endl << "Input out of bounds. Enter any key to return." << endl;
@@ -38,7 +57,7 @@ int main()
 			cin.ignore(10000, '\n');
 			break;
 		}	
-	} while (response != 3);
+	} while (response != 5);
 	return 0;
 }
 
@@ -47,8 +66,11 @@ int menu()
 	int response = 0;
 
 	cout << "1. Store a time" << endl;
-	cout << "2. Convert a time to a specific time zone" << endl;
-	cout << "3. Exit" << endl;
+	cout << "2. Delete a time" << endl;
+	cout << "3. Convert a time to a specific time zone" << endl;
+	cout << "4. Display all times stored" << endl;
+	cout << "5. Exit" << endl;
+	cout << "10. DELETE ALL STORED TIMES" << endl;
 
 	cout << endl << "Enter your input: ";
 	cin >> response;
@@ -108,4 +130,23 @@ string validZone()
 		getline(cin, zoneName);
 	}
 	return zoneName;
+}
+
+bool confirmDelete()
+{
+	int response = 0;
+	cout << "Enter any other number to cancel deletion." << endl;
+	cout << "Enter 1 to confirm deletion." << endl;
+	cin >> response;
+	cin.clear();
+	cin.ignore(10000, '\n');
+
+	if (response == 1)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
