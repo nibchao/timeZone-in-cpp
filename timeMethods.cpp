@@ -1,6 +1,10 @@
+/*
+*  Created by: Nicholas Chao
+*  Purpose: To convert a time in one time zone to another time zone
+*/
+
 #include <iostream>
 #include <string>
-#include <algorithm>
 #include "timeMethods.h"
 
 using namespace std;
@@ -58,7 +62,7 @@ void timeMethods::storeTime(int hours, int minutes, string zoneName)
 	cout << endl << hours << ":" << minutes << " " << zoneName << " has been stored." << endl << endl;
 }
 
-void timeMethods::deleteTime(int hours, int minutes)
+void timeMethods::deleteTime(int hours, int minutes, string zoneName)
 {
 	Node* currentNode = head;
 
@@ -68,7 +72,7 @@ void timeMethods::deleteTime(int hours, int minutes)
 		return;
 	}
 
-	if (head->hour == hours && head->minute == minutes)
+	if (head->hour == hours && head->minute == minutes && head->zone == zoneName)
 	{
 		head = currentNode->next;
 		delete(currentNode);
@@ -77,7 +81,7 @@ void timeMethods::deleteTime(int hours, int minutes)
 		return;
 	}
 
-	while (currentNode != nullptr && currentNode->next->hour != hours && currentNode->next->minute != minutes)
+	while (currentNode != nullptr && currentNode->next->hour != hours && currentNode->next->minute != minutes && currentNode->next->zone != zoneName)
 	{
 		currentNode = currentNode->next;
 	}
@@ -92,7 +96,7 @@ void timeMethods::deleteTime(int hours, int minutes)
 	delete(currentNode->next);
 	currentNode->next = nextNextNode;
 
-	cout << hours << ":" << minutes << " has been deleted." << endl << endl;
+	cout << hours << ":" << minutes << " " << zoneName << " has been deleted." << endl << endl;
 	nodeCount--;
 	return;
 }
@@ -104,219 +108,330 @@ void timeMethods::displayStoredTimes() const
 
 	while (currentNode)
 	{
-		transform(currentNode->zone.begin(), currentNode->zone.end(), currentNode->zone.begin(), ::toupper);
 		cout << "(" << counter << ") " << currentNode->hour << ":" << currentNode->minute << " " << currentNode->zone << endl;
 		counter++;
 		currentNode = currentNode->next;
 	}
 }
 
-// or maybe split up into three separate methods - hours, minutes, and zone name (maybe don't even need to bother with zone name?)
-// based off time zones listed on https://earthsky.org/astronomy-essentials/universal-time
-void timeMethods::convertToUTC(int hours, int minutes, string zone)
+// add a function in the main that asks user to input the region they are in/their time is in because there are conflicts with
+// time zone abbreviations such as CST having two meanings - China Standard Time and Central Standard Time
+// this would cause issues with converting the user's time to UTC then to desired time zone
+
+// potential solution could be to split the HourToUTC function into three general regions (Americas, Europe, Asia)
+
+// the time zones checked for inside this function are based on those listed on https://www.timeanddate.com/time/current-number-time-zones.html
+int timeMethods::HourToUTC(int hours, string zoneName)
 {
-	int convertHour = hours;
-	int convertMinute = minutes;
-	transform(zone.begin(), zone.end(), zone.begin(), ::toupper);
-	// United States
-	if (zone == "ADT")
+	int convertedHours = hours;
+
+	if (zoneName == "LINT" || zoneName == "TOST")
 	{
-		convertHour = convertHour + 3;
-		cout << hours << ":" << minutes << " " << zone << " in UTC is " << convertHour << ":" << minutes << " UTC" << endl << endl;
-		return;
+		convertedHours -= 14;
+		return convertedHours;
 	}
 
-	if (zone == "AST")
+	if (zoneName == "CHADT")
 	{
-		convertHour = convertHour + 4;
-		cout << hours << ":" << minutes << " " << zone << " in UTC is " << convertHour << ":" << minutes << " UTC" << endl << endl;
-		return;
+		convertedHours -= 13;
+		return convertedHours;
 	}
 
-	if (zone == "EDT")
+	if (zoneName == "NZDT" || zoneName == "FJST" || zoneName == "PHOT" || zoneName == "TKT" || zoneName == "TOT" || zoneName == "WST")
 	{
-		convertHour = convertHour + 4;
-		cout << hours << ":" << minutes << " " << zone << " in UTC is " << convertHour << ":" << minutes << " UTC" << endl << endl;
-		return;
+		convertedHours -= 13;
+		return convertedHours;
 	}
 
-	if (zone == "EST")
+	if (zoneName == "ANAT" || zoneName == "ANAST" || zoneName == "FJT" || zoneName == "GILT" || zoneName == "M" || zoneName == "MAGST" || zoneName == "MHT" || zoneName == "NFDT" || zoneName == "NRT" || zoneName == "NZST" || zoneName == "PETST" || zoneName == "PETT" || zoneName == "TVT" || zoneName == "WAKT" || zoneName == "WFT")
 	{
-		convertHour = convertHour + 5;
-		cout << hours << ":" << minutes << " " << zone << " in UTC is " << convertHour << ":" << minutes << " UTC" << endl << endl;
-		return;
+		convertedHours -= 12;
+		return convertedHours;
 	}
 
-	if (zone == "CDT")
+	if (zoneName == "AEDT" || zoneName == "BST" || zoneName == "KOST" || zoneName == "L" || zoneName == "LHDT" || zoneName == "MAGT" || zoneName == "NCT" || zoneName == "NFT" || zoneName == "PONT" || zoneName == "SAKT" || zoneName == "SBT" || zoneName == "SRET" || zoneName == "VLAST" || zoneName == "VUT")
 	{
-		convertHour = convertHour + 5;
-		cout << hours << ":" << minutes << " " << zone << " in UTC is " << convertHour << ":" << minutes << " UTC" << endl << endl;
-		return;
+		convertedHours -= 11;
+		return convertedHours;
 	}
 
-	if (zone == "CST")
+	if (zoneName == "ACDT" || zoneName == "LHST")
 	{
-		convertHour = convertHour + 6;
-		cout << hours << ":" << minutes << " " << zone << " in UTC is " << convertHour << ":" << minutes << " UTC" << endl << endl;
-		return;
+		convertedHours -= 10;
+		return convertedHours;
 	}
 
-	if (zone == "MDT")
+	if (zoneName == "AEST" || zoneName == "CHUT" || zoneName == "CHST" || zoneName == "DDUT" || zoneName == "K" || zoneName == "PGT" || zoneName == "VLAT" || zoneName == "YAKST" || zoneName == "YAPT")
 	{
-		convertHour = convertHour + 6;
-		cout << hours << ":" << minutes << " " << zone << " in UTC is " << convertHour << ":" << minutes << " UTC" << endl << endl;
-		return;
+		convertedHours -= 10;
+		return convertedHours;
 	}
 
-	if (zone == "MST")
+	if (zoneName == "ACST")
 	{
-		convertHour = convertHour + 7;
-		cout << hours << ":" << minutes << " " << zone << " in UTC is " << convertHour << ":" << minutes << " UTC" << endl << endl;
-		return;
+		convertedHours -= 9;
+		return convertedHours;
 	}
 
-	if (zone == "PDT")
+	if (zoneName == "JST" || zoneName == "AWDT" || zoneName == "CHOST" || zoneName == "I" || zoneName == "IRKST" || zoneName == "KST" || zoneName == "PWT" || zoneName == "TLT" || zoneName == "ULAST" || zoneName == "WIT" || zoneName == "YAKT")
 	{
-		convertHour = convertHour + 7;
-		cout << hours << ":" << minutes << " " << zone << " in UTC is " << convertHour << ":" << minutes << " UTC" << endl << endl;
-		return;
+		convertedHours -= 9;
+		return convertedHours;
 	}
 
-	if (zone == "PST")
+	if (zoneName == "ACWST")
 	{
-		convertHour = convertHour + 8;
-		cout << hours << ":" << minutes << " " << zone << " in UTC is " << convertHour << ":" << minutes << " UTC" << endl << endl;
-		return;
+		convertedHours -= 8;
+		return convertedHours;
 	}
 
-	if (zone == "AKDT")
+	if (zoneName == "CST" || zoneName == "AWST" || zoneName == "BNT" || zoneName == "CAST" || zoneName == "CHOT" || zoneName == "H" || zoneName == "HKT" || zoneName == "HOVST" || zoneName == "IRKT" || zoneName == "KRAST" || zoneName == "MYT" || zoneName == "PHT" || zoneName == "SGT" || zoneName == "ULAT" || zoneName == "WITA")
 	{
-		convertHour = convertHour + 8;
-		cout << hours << ":" << minutes << " " << zone << " in UTC is " << convertHour << ":" << minutes << " UTC" << endl << endl;
-		return;
+		convertedHours -= 8;
+		return convertedHours;
 	}
 
-	if (zone == "AKST")
+	if (zoneName == "WIB" || zoneName == "CXT" || zoneName == "DAVT" || zoneName == "G" || zoneName == "HOVT" || zoneName == "ICT" || zoneName == "KRAT" || zoneName == "NOVST" || zoneName == "NOVT" || zoneName == "OMSST")
 	{
-		convertHour = convertHour + 9;
-		cout << hours << ":" << minutes << " " << zone << " in UTC is " << convertHour << ":" << minutes << " UTC" << endl << endl;
-		return;
+		convertedHours -= 7;
+		return convertedHours;
 	}
 
-	if (zone == "HAST")
+	if (zoneName == "MMT" || zoneName == "CCT")
 	{
-		convertHour = convertHour + 10;
-		cout << hours << ":" << minutes << " " << zone << " in UTC is " << convertHour << ":" << minutes << " UTC" << endl << endl;
-		return;
+		convertedHours -= 6;
+		return convertedHours;
 	}
 
-	if (zone == "SST")
+	if (zoneName == "BST" || zoneName == "ALMT" || zoneName == "BTT" || zoneName == "F" || zoneName == "IOT" || zoneName == "KGT" || zoneName == "OMST" || zoneName == "QYZT" || zoneName == "VOST" || zoneName == "YEKST")
 	{
-		convertHour = convertHour + 11;
-		cout << hours << ":" << minutes << " " << zone << " in UTC is " << convertHour << ":" << minutes << " UTC" << endl << endl;
-		return;
+		convertedHours -= 6;
+		return convertedHours;
 	}
 
-	// Europe/Middle East
-	if (zone == "GMT")
+	if (zoneName == "NPT")
 	{
-		convertHour = convertHour + 0;
-		cout << hours << ":" << minutes << " " << zone << " in UTC is " << convertHour << ":" << minutes << " UTC" << endl << endl;
-		return;
+		convertedHours -= 5;
+		return convertedHours;
 	}
 
-	if (zone == "BST")
+	if (zoneName == "IST")
 	{
-		convertHour = convertHour - 1;
-		cout << hours << ":" << minutes << " " << zone << " in UTC is " << convertHour << ":" << minutes << " UTC" << endl << endl;
-		return;
+		convertedHours -= 5;
+		return convertedHours;
 	}
 
-	if (zone == "CET")
+	if (zoneName == "UZT" || zoneName == "AMST" || zoneName == "AQTT" || zoneName == "AZST" || zoneName == "E" || zoneName == "MAWT" || zoneName == "MVT" || zoneName == "ORAT" || zoneName == "PKT" || zoneName == "TFT" || zoneName == "TJT" || zoneName == "TMT" || zoneName == "YEKT")
 	{
-		convertHour = convertHour - 1;
-		cout << hours << ":" << minutes << " " << zone << " in UTC is " << convertHour << ":" << minutes << " UTC" << endl << endl;
-		return;
+		convertedHours -= 5;
+		return convertedHours;
 	}
 
-	if (zone == "CEST")
+	if (zoneName == "AFT" || zoneName == "IRDT")
 	{
-		convertHour = convertHour - 2;
-		cout << hours << ":" << minutes << " " << zone << " in UTC is " << convertHour << ":" << minutes << " UTC" << endl << endl;
-		return;
+		convertedHours -= 4;
+		return convertedHours;
 	}
 
-	if (zone == "EET")
+	if (zoneName == "GST" || zoneName == "ADT" || zoneName == "AMT" || zoneName == "AZT" || zoneName == "D" || zoneName == "GET" || zoneName == "KUYT" || zoneName == "MSD" || zoneName == "MUT" || zoneName == "RET" || zoneName == "SAMT" || zoneName == "SCT")
 	{
-		convertHour = convertHour - 2;
-		cout << hours << ":" << minutes << " " << zone << " in UTC is " << convertHour << ":" << minutes << " UTC" << endl << endl;
-		return;
+		convertedHours -= 4;
+		return convertedHours;
 	}
 
-	if (zone == "EEST")
+	if (zoneName == "IRST")
 	{
-		convertHour = convertHour - 3;
-		cout << hours << ":" << minutes << " " << zone << " in UTC is " << convertHour << ":" << minutes << " UTC" << endl << endl;
-		return;
+		convertedHours -= 3;
+		return convertedHours;
 	}
 
-	if (zone == "C")
+	if (zoneName == "MSK" || zoneName == "AST" || zoneName == "C" || zoneName == "EAT" || zoneName == "EEST" || zoneName == "FET" || zoneName == "IDT" || zoneName == "SYOT" || zoneName == "TRT")
 	{
-		convertHour = convertHour - 3;
-		cout << hours << ":" << minutes << " " << zone << " in UTC is " << convertHour << ":" << minutes << " UTC" << endl << endl;
-		return;
+		convertedHours -= 3;
+		return convertedHours;
 	}
 
-	if (zone == "D")
+	if (zoneName == "EET" || zoneName == "B" || zoneName == "CAT" || zoneName == "CEST" || zoneName == "IST" || zoneName == "SAST" || zoneName == "WAST")
 	{
-		convertHour = convertHour - 4;
-		cout << hours << ":" << minutes << " " << zone << " in UTC is " << convertHour << ":" << minutes << " UTC" << endl << endl;
-		return;
+		convertedHours -= 2;
+		return convertedHours;
 	}
 
-	// Australia
-	if (zone == "AWST")
+	if (zoneName == "CET" || zoneName == "A" || zoneName == "BST" || zoneName == "IST" || zoneName == "WAT" || zoneName == "WEST" || zoneName == "WST")
 	{
-		convertHour = convertHour - 8;
-		cout << hours << ":" << minutes << " " << zone << " in UTC is " << convertHour << ":" << minutes << " UTC" << endl << endl;
-		return;
+		convertedHours -= 1;
+		return convertedHours;
 	}
 
-	if (zone == "ACST")
+	if (zoneName == "GMT" || zoneName == "AZOST" || zoneName == "EGST" || zoneName == "WET" || zoneName == "WT" || zoneName == "Z")
 	{
-		convertHour = convertHour - 9;
-		convertMinute = convertMinute - 30;
-		cout << hours << ":" << minutes << " " << zone << " in UTC is " << convertHour << ":" << convertMinute << " UTC" << endl << endl;
-		return;
+		convertedHours -= 0;
+		return convertedHours;
 	}
 
-	if (zone == "ACDT")
+	if (zoneName == "CVT" || zoneName == "AZOT" || zoneName == "EGT" || zoneName == "N")
 	{
-		convertHour = convertHour - 10;
-		convertMinute = convertMinute - 30;
-		cout << hours << ":" << minutes << " " << zone << " in UTC is " << convertHour << ":" << convertMinute << " UTC" << endl << endl;
-		return;
+		convertedHours += 1;
+		return convertedHours;
 	}
 
-	if (zone == "AEST")
+	if (zoneName == "GST" || zoneName == "BRST" || zoneName == "FNT" || zoneName == "O" || zoneName == "PMDT" || zoneName == "UYST" || zoneName == "WGST")
 	{
-		convertHour = convertHour - 10;
-		cout << hours << ":" << minutes << " " << zone << " in UTC is " << convertHour << ":" << minutes << " UTC" << endl << endl;
-		return;
+		convertedHours += 2;
+		return convertedHours;
 	}
 
-	if (zone == "AEDT")
+	if (zoneName == "ART" || zoneName == "ADT" || zoneName == "AMST" || zoneName == "BRT" || zoneName == "CLST" || zoneName == "FKST" || zoneName == "GFT" || zoneName == "P" || zoneName == "PMST" || zoneName == "PYST" || zoneName == "ROTT" || zoneName == "SRT" || zoneName == "UYT" || zoneName == "WARST" || zoneName == "WGT")
 	{
-		convertHour = convertHour - 11;
-		cout << hours << ":" << minutes << " " << zone << " in UTC is " << convertHour << ":" << minutes << " UTC" << endl << endl;
-		return;
+		convertedHours += 3;
+		return convertedHours;
 	}
 
+	if (zoneName == "NST")
+	{
+		convertedHours += 3;
+		return convertedHours;
+	}
+
+	if (zoneName == "VET" || zoneName == "AMT" || zoneName == "AST" || zoneName == "BOT" || zoneName == "CDT" || zoneName == "CIDST" || zoneName == "CLT" || zoneName == "EDT" || zoneName == "FKT" || zoneName == "GYT" || zoneName == "PYT" || zoneName == "Q")
+	{
+		convertedHours += 4;
+		return convertedHours;
+	}
+
+	if (zoneName == "EST" || zoneName == "ACT" || zoneName == "CDT" || zoneName == "CIST" || zoneName == "COT" || zoneName == "CST" || zoneName == "EASST" || zoneName == "ECT" || zoneName == "PET" || zoneName == "R")
+	{
+		convertedHours += 5;
+		return convertedHours;
+	}
+
+	if (zoneName == "CST" || zoneName == "EAST" || zoneName == "GALT" || zoneName == "MDT" || zoneName == "S")
+	{
+		convertedHours += 6;
+		return convertedHours;
+	}
+
+	if (zoneName == "MST" || zoneName == "PDT" || zoneName == "T")
+	{
+		convertedHours += 7;
+		return convertedHours;
+	}
+
+	if (zoneName == "PST" || zoneName == "AKDT" || zoneName == "U")
+	{
+		convertedHours += 8;
+		return convertedHours;
+	}
+
+	if (zoneName == "AKST" || zoneName == "GAMT" || zoneName == "HDT" || zoneName == "V")
+	{
+		convertedHours += 9;
+		return convertedHours;
+	}
+
+	if (zoneName == "MART")
+	{
+		convertedHours += 9;
+		return convertedHours;
+	}
+
+	if (zoneName == "HST" || zoneName == "CKT" || zoneName == "TAHT" || zoneName == "W")
+	{
+		convertedHours += 10;
+		return convertedHours;
+	}
+
+	if (zoneName == "NUT" || zoneName == "SST" || zoneName == "X")
+	{
+		convertedHours += 11;
+		return convertedHours;
+	}
+
+	if (zoneName == "AoE" || zoneName == "Y")
+	{
+		convertedHours += 12;
+		return convertedHours;
+	}
+
+	return convertedHours;
 }
 
-// if above function is split into three (maybe two if time zone is not needed) separate functions, uses what they each return as arguments; make a
-// function in the main that asks user to input what they want the time that is now in UTC to be, then do the appropriate calculations
+// time zones checked for in this function are based on those listed on https://www.timeanddate.com/time/current-number-time-zones.html
+int timeMethods::MinuteToUTC(int minutes, string zoneName)
+{
+	int convertedMinutes = minutes;
+
+	if (zoneName == "CHADT")
+	{
+		convertedMinutes -= 45;
+		return convertedMinutes;
+	}
+
+	if (zoneName == "ACDT" || zoneName == "LHST")
+	{
+		convertedMinutes -= 30;
+		return convertedMinutes;
+	}
+
+	if (zoneName == "ACST")
+	{
+		convertedMinutes -= 30;
+		return convertedMinutes;
+	}
+
+	if (zoneName == "ACWST")
+	{
+		convertedMinutes -= 45;
+		return convertedMinutes;
+	}
+
+	if (zoneName == "MMT" || zoneName == "CCT")
+	{
+		convertedMinutes -= 30;
+		return convertedMinutes;
+	}
+
+	if (zoneName == "NPT")
+	{
+		convertedMinutes -= 45;
+		return convertedMinutes;
+	}
+
+	if (zoneName == "IST")
+	{
+		convertedMinutes -= 30;
+		return convertedMinutes;
+	}
+
+	if (zoneName == "AFT" || zoneName == "IRDT")
+	{
+		convertedMinutes -= 30;
+		return convertedMinutes;
+	}
+
+	if (zoneName == "IRST")
+	{
+		convertedMinutes -= 30;
+		return convertedMinutes;
+	}
+
+	if (zoneName == "NST")
+	{
+		convertedMinutes += 30;
+		return convertedMinutes;
+	}
+
+	if (zoneName == "MART")
+	{
+		convertedMinutes += 30;
+		return convertedMinutes;
+	}
+
+	return convertedMinutes;
+}
+
+// make a function in the main that asks user to input what they want the time that is now in UTC to be, then do the appropriate calculations
 void timeMethods::convertUTCtoOther(int hours, int minutes, string desiredZone)
 {
-
+	// need to figure out logic behind converting from UTC time to desired time zone time
 }

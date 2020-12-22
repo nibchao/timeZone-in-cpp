@@ -1,3 +1,8 @@
+/*
+*  Created by: Nicholas Chao
+*  Purpose: To convert a time in one time zone to another time zone
+*/
+
 #ifndef TIMEMETHODS_H
 #define TIMEMETHODS_H
 
@@ -29,9 +34,11 @@ public:
 	~timeMethods();
 
 	void storeTime(int, int, string);
-	void deleteTime(int, int);
+	void deleteTime(int, int, string);
 	void displayStoredTimes() const;
-	void convertToUTC(int, int, string);
+
+	int HourToUTC(int, string);
+	int MinuteToUTC(int, string);
 	void convertUTCtoOther(int, int, string);
 };
 #endif
