@@ -26,6 +26,12 @@ int main()
 	int hours = 0;
 	int minutes = 0;
 	string zoneName = "";
+
+	int hourUTC = 0;
+	int minuteUTC = 0;
+
+	int hourDesired = 0;
+	int minuteDesired = 0;
 	//
 
 	timeMethods time;
@@ -46,9 +52,19 @@ int main()
 			break;
 		case 3: // convert a time to another time zone
 
-			// need to add a check for if the time exists or if converting is possible (maybe check if head is still nullptr?)
+			// add a function that asks user to input time they want to convert and search for nodes in the list to see if it exists; if so, runs necessary functions
+			// one condition is check if head is nullptr and return no times found in list
+			// make a separate string to represent the desired time zone and replace the second zoneName in the cout statement below
+			// add necessary checks/validation of input wherever needed
 
-			time.convertUTCtoOther(time.HourToUTC(hours, zoneName), time.MinuteToUTC(minutes, zoneName), zoneName);
+
+			// need to add a check for if the time exists or if converting is possible (maybe check if head is still nullptr?)
+			hourUTC = time.HourToUTC(hours, zoneName);
+			minuteUTC = time.MinuteToUTC(minutes, zoneName);
+			hourDesired = time.convertHourUTCtoZoneHour(hourUTC, zoneName);
+			minuteDesired = time.convertMinuteUTCtoZoneMinute(minuteUTC, zoneName);
+
+			cout << hours << ":" << minutes << " in " << zoneName << " is " << hourDesired << ":" << minuteDesired << " " << zoneName << endl << endl;
 
 			// also need to check if hour when converted to UTC is greater than 12 or a negative hour value
 			// same with if minute converted to UTC is greater than 60 or a negative minute value

@@ -39,6 +39,7 @@ public:
 
 	int HourToUTC(int, string);
 	int MinuteToUTC(int, string);
-	void convertUTCtoOther(int, int, string);
+	int convertHourUTCtoZoneHour(int, string);
+	int convertMinuteUTCtoZoneMinute(int, string);
 };
 #endif

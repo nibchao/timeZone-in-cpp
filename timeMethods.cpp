@@ -431,7 +431,13 @@ int timeMethods::MinuteToUTC(int minutes, string zoneName)
 }
 
 // make a function in the main that asks user to input what they want the time that is now in UTC to be, then do the appropriate calculations
-void timeMethods::convertUTCtoOther(int hours, int minutes, string desiredZone)
+int timeMethods::convertHourUTCtoZoneHour(int hours, string desiredZone)
 {
 	// need to figure out logic behind converting from UTC time to desired time zone time
+	return 0;
+}
+
+int timeMethods::convertMinuteUTCtoZoneMinute(int minutes, string desiredZone)
+{
+	return 0;
 }
