@@ -36,6 +36,7 @@ public:
 	void storeTime(int, int, string);
 	void deleteTime(int, int, string);
 	void displayStoredTimes() const;
+	bool searchTime(int, int, string);
 
 	int HourToUTC(int, string);
 	int MinuteToUTC(int, string);

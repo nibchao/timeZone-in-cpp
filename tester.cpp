@@ -32,6 +32,7 @@ int main()
 
 	int hourDesired = 0;
 	int minuteDesired = 0;
+	string zoneDesired = "";
 	//
 
 	timeMethods time;
@@ -48,27 +49,99 @@ int main()
 			time.storeTime(hours, minutes, zoneName);
 			break;
 		case 2: // delete a time
-			time.deleteTime(hours, minutes, zoneName); // temporary
+			cout << 78 % 60 << endl;
+			//time.deleteTime(hours, minutes, zoneName); // temporary
 			break;
 		case 3: // convert a time to another time zone
 
-			// add a function that asks user to input time they want to convert and search for nodes in the list to see if it exists; if so, runs necessary functions
-			// one condition is check if head is nullptr and return no times found in list
-			// make a separate string to represent the desired time zone and replace the second zoneName in the cout statement below
-			// add necessary checks/validation of input wherever needed
 
 
-			// need to add a check for if the time exists or if converting is possible (maybe check if head is still nullptr?)
-			hourUTC = time.HourToUTC(hours, zoneName);
-			minuteUTC = time.MinuteToUTC(minutes, zoneName);
-			hourDesired = time.convertHourUTCtoZoneHour(hourUTC, zoneName);
-			minuteDesired = time.convertMinuteUTCtoZoneMinute(minuteUTC, zoneName);
+			// add validation to every area that requires user input and move everything into separate functions
 
-			cout << hours << ":" << minutes << " in " << zoneName << " is " << hourDesired << ":" << minuteDesired << " " << zoneName << endl << endl;
 
-			// also need to check if hour when converted to UTC is greater than 12 or a negative hour value
-			// same with if minute converted to UTC is greater than 60 or a negative minute value
 
+			cout << "Enter the hours, minutes, and time zone of the time you would like to convert." << endl;
+			cout << "The hours: ";
+			cin >> hours;
+			cin.clear();
+			cin.ignore(10000, '\n');
+			cout << endl << "The minutes: ";
+			cin >> minutes;
+			cin.clear();
+			cin.ignore(10000, '\n');
+			cout << endl << "The time zone abbreviation: ";
+			getline(cin, zoneName);
+			transform(zoneName.begin(), zoneName.end(), zoneName.begin(), ::toupper);
+
+			cout << "Starting search for the specified time in the list of stored times." << endl;
+			if (time.searchTime(hours, minutes, zoneName) == true)
+			{
+				cout << "Input the time zone abbrevation you would like to convert the time to: " << endl;
+				zoneDesired = validZone();
+				if (zoneDesired == zoneName)
+				{
+					cout << "Error: Desired time zone is the same as the stored time." << endl;
+					break;
+				}
+				hourUTC = time.HourToUTC(hours, zoneName);
+				if (hourUTC < 0) // check if hourUTC is negative first
+				{
+					hourUTC = hourUTC * -1;
+				}
+				if (hourUTC == 0) // check if hourUTC is 0
+				{
+					hourUTC = 12;
+				}
+				if (hourUTC > 12) // check if hourUTC is greater than 12
+				{
+					hourUTC = hourUTC % 12;
+				}
+				if (hourUTC == 0) // check if hourUTC is 0 again
+				{
+					hourUTC = 12;
+				}
+				minuteUTC = time.MinuteToUTC(minutes, zoneName);
+				if (minuteUTC < 0) // check if minuteUTC is negative first
+				{
+					minuteUTC = minuteUTC * -1;
+				}
+				if (minuteUTC > 60) // check if minuteUTC is greater than 60
+				{
+					minuteUTC = hourUTC % 60;
+				}
+				hourDesired = time.convertHourUTCtoZoneHour(hourUTC, zoneName);
+				if (hourDesired < 0) // check if hourDesired is negative first
+				{
+					hourDesired = hourDesired * -1;
+				}
+				if (hourDesired == 0) // check if hourDesired is 0
+				{
+					hourDesired = 12;
+				}
+				if (hourDesired > 12) // check if hourDesired is greater than 12
+				{
+					hourDesired = hourDesired % 12;
+				}
+				if (hourDesired == 0) // check if hourDesired is 0 again
+				{
+					hourDesired = 12;
+				}
+				minuteDesired = time.convertMinuteUTCtoZoneMinute(minuteUTC, zoneName);
+				if (minuteDesired < 0) // check if minuteDesired is negative first
+				{
+					minuteDesired = minuteDesired * -1;
+				}
+				if (minuteDesired > 60) // check if minuteDesired is greater than 60
+				{
+					minuteDesired = minuteDesired % 60;
+				}
+				cout << hours << ":" << minutes << " in " << zoneName << " is " << hourUTC << ":" << minuteUTC << " " << zoneDesired << endl << endl; // testing UTC converter function
+				//cout << hours << ":" << minutes << " in " << zoneName << " is " << hourDesired << ":" << minuteDesired << " " << zoneDesired << endl << endl;
+			}
+			else
+			{
+				break;
+			}
 			break;
 		case 4: // display times stored
 			cout << endl << "Displaying the stored times:" << endl;

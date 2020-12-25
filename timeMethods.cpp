@@ -114,6 +114,29 @@ void timeMethods::displayStoredTimes() const
 	}
 }
 
+bool timeMethods::searchTime(int hours, int minutes, string zoneName)
+{
+	Node* currentNode = head;
+
+	if (head == nullptr)
+	{
+		cout << "There were no stored times found." << endl;
+		return false;
+	}
+
+	while (currentNode)
+	{
+		if (currentNode->hour == hours && currentNode->minute == minutes && currentNode->zone == zoneName)
+		{
+			cout << "Specified time was found in the list of stored times." << endl;
+			return true;
+		}
+		currentNode = currentNode->next;
+	}
+	cout << "Specified time was not found in the list of stored times." << endl;
+	return false;
+}
+
 // add a function in the main that asks user to input the region they are in/their time is in because there are conflicts with
 // time zone abbreviations such as CST having two meanings - China Standard Time and Central Standard Time
 // this would cause issues with converting the user's time to UTC then to desired time zone
@@ -430,14 +453,312 @@ int timeMethods::MinuteToUTC(int minutes, string zoneName)
 	return convertedMinutes;
 }
 
-// make a function in the main that asks user to input what they want the time that is now in UTC to be, then do the appropriate calculations
+// these two functions do not work properly
 int timeMethods::convertHourUTCtoZoneHour(int hours, string desiredZone)
 {
-	// need to figure out logic behind converting from UTC time to desired time zone time
-	return 0;
+	int convertedHours = hours;
+
+	if (desiredZone == "LINT" || desiredZone == "TOST")
+	{
+		convertedHours += 14;
+		return convertedHours;
+	}
+
+	if (desiredZone == "CHADT")
+	{
+		convertedHours += 13;
+		return convertedHours;
+	}
+
+	if (desiredZone == "NZDT" || desiredZone == "FJST" || desiredZone == "PHOT" || desiredZone == "TKT" || desiredZone == "TOT" || desiredZone == "WST")
+	{
+		convertedHours += 13;
+		return convertedHours;
+	}
+
+	if (desiredZone == "ANAT" || desiredZone == "ANAST" || desiredZone == "FJT" || desiredZone == "GILT" || desiredZone == "M" || desiredZone == "MAGST" || desiredZone == "MHT" || desiredZone == "NFDT" || desiredZone == "NRT" || desiredZone == "NZST" || desiredZone == "PETST" || desiredZone == "PETT" || desiredZone == "TVT" || desiredZone == "WAKT" || desiredZone == "WFT")
+	{
+		convertedHours += 12;
+		return convertedHours;
+	}
+
+	if (desiredZone == "AEDT" || desiredZone == "BST" || desiredZone == "KOST" || desiredZone == "L" || desiredZone == "LHDT" || desiredZone == "MAGT" || desiredZone == "NCT" || desiredZone == "NFT" || desiredZone == "PONT" || desiredZone == "SAKT" || desiredZone == "SBT" || desiredZone == "SRET" || desiredZone == "VLAST" || desiredZone == "VUT")
+	{
+		convertedHours += 11;
+		return convertedHours;
+	}
+
+	if (desiredZone == "ACDT" || desiredZone == "LHST")
+	{
+		convertedHours += 10;
+		return convertedHours;
+	}
+
+	if (desiredZone == "AEST" || desiredZone == "CHUT" || desiredZone == "CHST" || desiredZone == "DDUT" || desiredZone == "K" || desiredZone == "PGT" || desiredZone == "VLAT" || desiredZone == "YAKST" || desiredZone == "YAPT")
+	{
+		convertedHours += 10;
+		return convertedHours;
+	}
+
+	if (desiredZone == "ACST")
+	{
+		convertedHours += 9;
+		return convertedHours;
+	}
+
+	if (desiredZone == "JST" || desiredZone == "AWDT" || desiredZone == "CHOST" || desiredZone == "I" || desiredZone == "IRKST" || desiredZone == "KST" || desiredZone == "PWT" || desiredZone == "TLT" || desiredZone == "ULAST" || desiredZone == "WIT" || desiredZone == "YAKT")
+	{
+		convertedHours += 9;
+		return convertedHours;
+	}
+
+	if (desiredZone == "ACWST")
+	{
+		convertedHours += 8;
+		return convertedHours;
+	}
+
+	if (desiredZone == "CST" || desiredZone == "AWST" || desiredZone == "BNT" || desiredZone == "CAST" || desiredZone == "CHOT" || desiredZone == "H" || desiredZone == "HKT" || desiredZone == "HOVST" || desiredZone == "IRKT" || desiredZone == "KRAST" || desiredZone == "MYT" || desiredZone == "PHT" || desiredZone == "SGT" || desiredZone == "ULAT" || desiredZone == "WITA")
+	{
+		convertedHours += 8;
+		return convertedHours;
+	}
+
+	if (desiredZone == "WIB" || desiredZone == "CXT" || desiredZone == "DAVT" || desiredZone == "G" || desiredZone == "HOVT" || desiredZone == "ICT" || desiredZone == "KRAT" || desiredZone == "NOVST" || desiredZone == "NOVT" || desiredZone == "OMSST")
+	{
+		convertedHours += 7;
+		return convertedHours;
+	}
+
+	if (desiredZone == "MMT" || desiredZone == "CCT")
+	{
+		convertedHours += 6;
+		return convertedHours;
+	}
+
+	if (desiredZone == "BST" || desiredZone == "ALMT" || desiredZone == "BTT" || desiredZone == "F" || desiredZone == "IOT" || desiredZone == "KGT" || desiredZone == "OMST" || desiredZone == "QYZT" || desiredZone == "VOST" || desiredZone == "YEKST")
+	{
+		convertedHours += 6;
+		return convertedHours;
+	}
+
+	if (desiredZone == "NPT")
+	{
+		convertedHours += 5;
+		return convertedHours;
+	}
+
+	if (desiredZone == "IST")
+	{
+		convertedHours += 5;
+		return convertedHours;
+	}
+
+	if (desiredZone == "UZT" || desiredZone == "AMST" || desiredZone == "AQTT" || desiredZone == "AZST" || desiredZone == "E" || desiredZone == "MAWT" || desiredZone == "MVT" || desiredZone == "ORAT" || desiredZone == "PKT" || desiredZone == "TFT" || desiredZone == "TJT" || desiredZone == "TMT" || desiredZone == "YEKT")
+	{
+		convertedHours += 5;
+		return convertedHours;
+	}
+
+	if (desiredZone == "AFT" || desiredZone == "IRDT")
+	{
+		convertedHours += 4;
+		return convertedHours;
+	}
+
+	if (desiredZone == "GST" || desiredZone == "ADT" || desiredZone == "AMT" || desiredZone == "AZT" || desiredZone == "D" || desiredZone == "GET" || desiredZone == "KUYT" || desiredZone == "MSD" || desiredZone == "MUT" || desiredZone == "RET" || desiredZone == "SAMT" || desiredZone == "SCT")
+	{
+		convertedHours += 4;
+		return convertedHours;
+	}
+
+	if (desiredZone == "IRST")
+	{
+		convertedHours += 3;
+		return convertedHours;
+	}
+
+	if (desiredZone == "MSK" || desiredZone == "AST" || desiredZone == "C" || desiredZone == "EAT" || desiredZone == "EEST" || desiredZone == "FET" || desiredZone == "IDT" || desiredZone == "SYOT" || desiredZone == "TRT")
+	{
+		convertedHours += 3;
+		return convertedHours;
+	}
+
+	if (desiredZone == "EET" || desiredZone == "B" || desiredZone == "CAT" || desiredZone == "CEST" || desiredZone == "IST" || desiredZone == "SAST" || desiredZone == "WAST")
+	{
+		convertedHours += 2;
+		return convertedHours;
+	}
+
+	if (desiredZone == "CET" || desiredZone == "A" || desiredZone == "BST" || desiredZone == "IST" || desiredZone == "WAT" || desiredZone == "WEST" || desiredZone == "WST")
+	{
+		convertedHours += 1;
+		return convertedHours;
+	}
+
+	if (desiredZone == "GMT" || desiredZone == "AZOST" || desiredZone == "EGST" || desiredZone == "WET" || desiredZone == "WT" || desiredZone == "Z")
+	{
+		convertedHours += 0;
+		return convertedHours;
+	}
+
+	if (desiredZone == "CVT" || desiredZone == "AZOT" || desiredZone == "EGT" || desiredZone == "N")
+	{
+		convertedHours -= 1;
+		return convertedHours;
+	}
+
+	if (desiredZone == "GST" || desiredZone == "BRST" || desiredZone == "FNT" || desiredZone == "O" || desiredZone == "PMDT" || desiredZone == "UYST" || desiredZone == "WGST")
+	{
+		convertedHours -= 2;
+		return convertedHours;
+	}
+
+	if (desiredZone == "ART" || desiredZone == "ADT" || desiredZone == "AMST" || desiredZone == "BRT" || desiredZone == "CLST" || desiredZone == "FKST" || desiredZone == "GFT" || desiredZone == "P" || desiredZone == "PMST" || desiredZone == "PYST" || desiredZone == "ROTT" || desiredZone == "SRT" || desiredZone == "UYT" || desiredZone == "WARST" || desiredZone == "WGT")
+	{
+		convertedHours -= 3;
+		return convertedHours;
+	}
+
+	if (desiredZone == "NST")
+	{
+		convertedHours -= 3;
+		return convertedHours;
+	}
+
+	if (desiredZone == "VET" || desiredZone == "AMT" || desiredZone == "AST" || desiredZone == "BOT" || desiredZone == "CDT" || desiredZone == "CIDST" || desiredZone == "CLT" || desiredZone == "EDT" || desiredZone == "FKT" || desiredZone == "GYT" || desiredZone == "PYT" || desiredZone == "Q")
+	{
+		convertedHours -= 4;
+		return convertedHours;
+	}
+
+	if (desiredZone == "EST" || desiredZone == "ACT" || desiredZone == "CDT" || desiredZone == "CIST" || desiredZone == "COT" || desiredZone == "CST" || desiredZone == "EASST" || desiredZone == "ECT" || desiredZone == "PET" || desiredZone == "R")
+	{
+		convertedHours -= 5;
+		return convertedHours;
+	}
+
+	if (desiredZone == "CST" || desiredZone == "EAST" || desiredZone == "GALT" || desiredZone == "MDT" || desiredZone == "S")
+	{
+		convertedHours -= 6;
+		return convertedHours;
+	}
+
+	if (desiredZone == "MST" || desiredZone == "PDT" || desiredZone == "T")
+	{
+		convertedHours -= 7;
+		return convertedHours;
+	}
+
+	if (desiredZone == "PST" || desiredZone == "AKDT" || desiredZone == "U")
+	{
+		convertedHours -= 8;
+		return convertedHours;
+	}
+
+	if (desiredZone == "AKST" || desiredZone == "GAMT" || desiredZone == "HDT" || desiredZone == "V")
+	{
+		convertedHours -= 9;
+		return convertedHours;
+	}
+
+	if (desiredZone == "MART")
+	{
+		convertedHours -= 9;
+		return convertedHours;
+	}
+
+	if (desiredZone == "HST" || desiredZone == "CKT" || desiredZone == "TAHT" || desiredZone == "W")
+	{
+		convertedHours -= 10;
+		return convertedHours;
+	}
+
+	if (desiredZone == "NUT" || desiredZone == "SST" || desiredZone == "X")
+	{
+		convertedHours -= 11;
+		return convertedHours;
+	}
+
+	if (desiredZone == "AoE" || desiredZone == "Y")
+	{
+		convertedHours -= 12;
+		return convertedHours;
+	}
+
+	return convertedHours;
 }
 
 int timeMethods::convertMinuteUTCtoZoneMinute(int minutes, string desiredZone)
 {
-	return 0;
+	int convertedMinutes = minutes;
+
+	if (desiredZone == "CHADT")
+	{
+		convertedMinutes += 45;
+		return convertedMinutes;
+	}
+
+	if (desiredZone == "ACDT" || desiredZone == "LHST")
+	{
+		convertedMinutes += 30;
+		return convertedMinutes;
+	}
+
+	if (desiredZone == "ACST")
+	{
+		convertedMinutes += 30;
+		return convertedMinutes;
+	}
+
+	if (desiredZone == "ACWST")
+	{
+		convertedMinutes += 45;
+		return convertedMinutes;
+	}
+
+	if (desiredZone == "MMT" || desiredZone == "CCT")
+	{
+		convertedMinutes += 30;
+		return convertedMinutes;
+	}
+
+	if (desiredZone == "NPT")
+	{
+		convertedMinutes += 45;
+		return convertedMinutes;
+	}
+
+	if (desiredZone == "IST")
+	{
+		convertedMinutes += 30;
+		return convertedMinutes;
+	}
+
+	if (desiredZone == "AFT" || desiredZone == "IRDT")
+	{
+		convertedMinutes += 30;
+		return convertedMinutes;
+	}
+
+	if (desiredZone == "IRST")
+	{
+		convertedMinutes += 30;
+		return convertedMinutes;
+	}
+
+	if (desiredZone == "NST")
+	{
+		convertedMinutes -= 30;
+		return convertedMinutes;
+	}
+
+	if (desiredZone == "MART")
+	{
+		convertedMinutes -= 30;
+		return convertedMinutes;
+	}
+
+	return convertedMinutes;
 }
+//
