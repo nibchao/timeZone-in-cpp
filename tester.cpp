@@ -18,6 +18,7 @@ int validHours();
 int validMinutes();
 string validZone();
 bool confirmDelete();
+string validMeridiem();
 
 int main()
 {
@@ -26,6 +27,7 @@ int main()
 	int hours = 0;
 	int minutes = 0;
 	string zoneName = "";
+	string meridiem = ""; // used to represent the AM/PM for a 12 hour clock
 
 	int hourUTC = 0;
 	int minuteUTC = 0;
@@ -33,6 +35,7 @@ int main()
 	int hourDesired = 0;
 	int minuteDesired = 0;
 	string zoneDesired = "";
+	string meridiemDesired = "";
 	//
 
 	timeMethods time;
@@ -45,22 +48,18 @@ int main()
 		case 1: // store a time
 			hours = validHours();
 			minutes = validMinutes();
+			meridiem = validMeridiem();
 			zoneName = validZone();
-			time.storeTime(hours, minutes, zoneName);
+			time.storeTime(hours, minutes, meridiem, zoneName);
 			break;
 		case 2: // delete a time
-			cout << 78 % 60 << endl;
 			//time.deleteTime(hours, minutes, zoneName); // temporary
 			break;
 		case 3: // convert a time to another time zone
 
-
-
 			// add validation to every area that requires user input and move everything into separate functions
 
-
-
-			cout << "Enter the hours, minutes, and time zone of the time you would like to convert." << endl;
+			cout << "Enter the hours, minutes, AM/PM, and time zone of the time you would like to convert." << endl;
 			cout << "The hours: ";
 			cin >> hours;
 			cin.clear();
@@ -69,12 +68,15 @@ int main()
 			cin >> minutes;
 			cin.clear();
 			cin.ignore(10000, '\n');
+			cout << endl << "AM or PM: ";
+			getline(cin, meridiem);
+			transform(meridiem.begin(), meridiem.end(), meridiem.begin(), ::toupper);
 			cout << endl << "The time zone abbreviation: ";
 			getline(cin, zoneName);
 			transform(zoneName.begin(), zoneName.end(), zoneName.begin(), ::toupper);
 
 			cout << "Starting search for the specified time in the list of stored times." << endl;
-			if (time.searchTime(hours, minutes, zoneName) == true)
+			if (time.searchTime(hours, minutes, meridiem, zoneName) == true)
 			{
 				cout << "Input the time zone abbrevation you would like to convert the time to: " << endl;
 				zoneDesired = validZone();
@@ -109,7 +111,7 @@ int main()
 				{
 					minuteUTC = hourUTC % 60;
 				}
-				hourDesired = time.convertHourUTCtoZoneHour(hourUTC, zoneName);
+				hourDesired = time.convertHourUTCtoZoneHour(hourUTC, zoneDesired);
 				if (hourDesired < 0) // check if hourDesired is negative first
 				{
 					hourDesired = hourDesired * -1;
@@ -117,16 +119,20 @@ int main()
 				if (hourDesired == 0) // check if hourDesired is 0
 				{
 					hourDesired = 12;
+					meridiemDesired = "AM";
 				}
+				meridiemDesired = "AM";
 				if (hourDesired > 12) // check if hourDesired is greater than 12
 				{
 					hourDesired = hourDesired % 12;
+					meridiemDesired = "PM";
 				}
 				if (hourDesired == 0) // check if hourDesired is 0 again
 				{
 					hourDesired = 12;
+					meridiemDesired = "AM";
 				}
-				minuteDesired = time.convertMinuteUTCtoZoneMinute(minuteUTC, zoneName);
+				minuteDesired = time.convertMinuteUTCtoZoneMinute(minuteUTC, zoneDesired);
 				if (minuteDesired < 0) // check if minuteDesired is negative first
 				{
 					minuteDesired = minuteDesired * -1;
@@ -135,8 +141,8 @@ int main()
 				{
 					minuteDesired = minuteDesired % 60;
 				}
-				cout << hours << ":" << minutes << " in " << zoneName << " is " << hourUTC << ":" << minuteUTC << " " << zoneDesired << endl << endl; // testing UTC converter function
-				//cout << hours << ":" << minutes << " in " << zoneName << " is " << hourDesired << ":" << minuteDesired << " " << zoneDesired << endl << endl;
+				//cout << hours << ":" << minutes << " in " << zoneName << " is " << hourUTC << ":" << minuteUTC << " " << zoneDesired << endl << endl; // testing UTC converter function
+				cout << hours << ":" << minutes << " " << meridiem << " " << zoneName << " in " << zoneDesired << " is " << hourDesired << ":" << minuteDesired << " " << meridiemDesired << " " << zoneDesired << endl << endl;
 			}
 			else
 			{
@@ -261,4 +267,21 @@ bool confirmDelete()
 	{
 		return false;
 	}
+}
+
+string validMeridiem()
+{
+	string meridiem = "";
+	cout << "Enter AM or PM on the 12-hour clock: ";
+	getline(cin, meridiem);
+	transform(meridiem.begin(), meridiem.end(), meridiem.begin(), ::toupper);
+
+	while (meridiem == "" || meridiem.find_first_not_of(' ') || meridiem.length() > 2 || (meridiem != "AM" && meridiem != "PM"))
+	{
+		cout << endl << "Error: Input contained blank characters, was too long, or was not an accepted input (AM or PM)." << endl;
+		cout << endl << "Enter AM or PM on the 12-hour clock: ";
+		getline(cin, meridiem);
+		transform(meridiem.begin(), meridiem.end(), meridiem.begin(), ::toupper);
+	}
+	return meridiem;
 }

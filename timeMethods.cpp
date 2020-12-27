@@ -24,22 +24,23 @@ timeMethods::~timeMethods()
 	nodeCount = 0;
 }
 
-void timeMethods::storeTime(int hours, int minutes, string zoneName)
+void timeMethods::storeTime(int hours, int minutes, string meridiemAbbreviation, string zoneName)
 {
 	if (hours < 0)
 	{
-		cout << "Error: The time value for hours, " << hours << " is negative which is not an accepted input (no negative time values)." << "The given time will not be stored." << endl;
+		cout << "Error: The time value for hours, " << hours << " is negative which is not an accepted input (no negative time values)." << "No time was stored." << endl;
 		return;
 	}
 	if (minutes < 0)
 	{
-		cout << "Error: The time value for minutes, " << minutes << " is negative which is not an accepted input (no negative time values)." << "The given time will not be stored." << endl;
+		cout << "Error: The time value for minutes, " << minutes << " is negative which is not an accepted input (no negative time values)." << "No time was stored." << endl;
 		return;
 	}
 
 	Node* newNode = new Node;
 	newNode->hour = hours;
 	newNode->minute = minutes;
+	newNode->meridiem = meridiemAbbreviation;
 	newNode->zone = zoneName;
 	newNode->next = nullptr;
 
@@ -59,10 +60,10 @@ void timeMethods::storeTime(int hours, int minutes, string zoneName)
 		currentNode->next = newNode;
 		nodeCount++;
 	}
-	cout << endl << hours << ":" << minutes << " " << zoneName << " has been stored." << endl << endl;
+	cout << endl << hours << ":" << minutes << " " << meridiemAbbreviation << " " << zoneName << " has been stored." << endl << endl;
 }
 
-void timeMethods::deleteTime(int hours, int minutes, string zoneName)
+void timeMethods::deleteTime(int hours, int minutes, string meridiemAbbreviation, string zoneName)
 {
 	Node* currentNode = head;
 
@@ -72,16 +73,16 @@ void timeMethods::deleteTime(int hours, int minutes, string zoneName)
 		return;
 	}
 
-	if (head->hour == hours && head->minute == minutes && head->zone == zoneName)
+	if (head->hour == hours && head->minute == minutes && head->meridiem == meridiemAbbreviation && head->zone == zoneName)
 	{
 		head = currentNode->next;
 		delete(currentNode);
-		cout << hours << ":" << minutes << " has been deleted." << endl << endl;
+		cout << hours << ":" << minutes << " " << meridiemAbbreviation << " " << zoneName << " has been deleted." << endl << endl;
 		nodeCount--;
 		return;
 	}
 
-	while (currentNode != nullptr && currentNode->next->hour != hours && currentNode->next->minute != minutes && currentNode->next->zone != zoneName)
+	while (currentNode != nullptr && currentNode->next->hour != hours && currentNode->next->minute != minutes && currentNode->next->meridiem != meridiemAbbreviation && currentNode->next->zone != zoneName)
 	{
 		currentNode = currentNode->next;
 	}
@@ -96,7 +97,7 @@ void timeMethods::deleteTime(int hours, int minutes, string zoneName)
 	delete(currentNode->next);
 	currentNode->next = nextNextNode;
 
-	cout << hours << ":" << minutes << " " << zoneName << " has been deleted." << endl << endl;
+	cout << hours << ":" << minutes << " " << meridiemAbbreviation << " " << zoneName << " has been deleted." << endl << endl;
 	nodeCount--;
 	return;
 }
@@ -108,13 +109,13 @@ void timeMethods::displayStoredTimes() const
 
 	while (currentNode)
 	{
-		cout << "(" << counter << ") " << currentNode->hour << ":" << currentNode->minute << " " << currentNode->zone << endl;
+		cout << "(" << counter << ") " << currentNode->hour << ":" << currentNode->minute << " " << currentNode->meridiem << " " << currentNode->zone << endl;
 		counter++;
 		currentNode = currentNode->next;
 	}
 }
 
-bool timeMethods::searchTime(int hours, int minutes, string zoneName)
+bool timeMethods::searchTime(int hours, int minutes, string meridiemAbbreviation, string zoneName)
 {
 	Node* currentNode = head;
 
@@ -126,7 +127,7 @@ bool timeMethods::searchTime(int hours, int minutes, string zoneName)
 
 	while (currentNode)
 	{
-		if (currentNode->hour == hours && currentNode->minute == minutes && currentNode->zone == zoneName)
+		if (currentNode->hour == hours && currentNode->minute == minutes && currentNode->meridiem == meridiemAbbreviation && currentNode->zone == zoneName)
 		{
 			cout << "Specified time was found in the list of stored times." << endl;
 			return true;

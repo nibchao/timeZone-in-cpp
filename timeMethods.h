@@ -18,6 +18,7 @@ private:
 		int hour;
 		int minute;
 		string zone;
+		string meridiem;
 		Node* next;
 	};
 
@@ -33,10 +34,10 @@ public:
 
 	~timeMethods();
 
-	void storeTime(int, int, string);
-	void deleteTime(int, int, string);
+	void storeTime(int, int, string, string);
+	void deleteTime(int, int, string, string);
 	void displayStoredTimes() const;
-	bool searchTime(int, int, string);
+	bool searchTime(int, int, string, string);
 
 	int HourToUTC(int, string);
 	int MinuteToUTC(int, string);
