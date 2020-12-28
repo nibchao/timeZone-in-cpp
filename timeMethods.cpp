@@ -1,6 +1,7 @@
 /*
 *  Created by: Nicholas Chao
 *  Purpose: To convert a time in one time zone to another time zone
+*  Accepted time zones in this program are based on the ones listed on https://www.timeanddate.com/time/current-number-time-zones.html
 */
 
 #include <iostream>
@@ -21,7 +22,6 @@ timeMethods::~timeMethods()
 		currentNode = nextNode;
 	}
 	head = nullptr;
-	nodeCount = 0;
 }
 
 void timeMethods::storeTime(int hours, int minutes, string meridiemAbbreviation, string zoneName)
@@ -49,7 +49,6 @@ void timeMethods::storeTime(int hours, int minutes, string meridiemAbbreviation,
 	if (head == nullptr)
 	{
 		head = newNode;
-		nodeCount++;
 	}
 	else
 	{
@@ -58,7 +57,6 @@ void timeMethods::storeTime(int hours, int minutes, string meridiemAbbreviation,
 			currentNode = currentNode->next;
 		}
 		currentNode->next = newNode;
-		nodeCount++;
 	}
 	cout << endl << hours << ":" << minutes << " " << meridiemAbbreviation << " " << zoneName << " has been stored." << endl << endl;
 }
@@ -78,7 +76,6 @@ void timeMethods::deleteTime(int hours, int minutes, string meridiemAbbreviation
 		head = currentNode->next;
 		delete(currentNode);
 		cout << hours << ":" << minutes << " " << meridiemAbbreviation << " " << zoneName << " has been deleted." << endl << endl;
-		nodeCount--;
 		return;
 	}
 
@@ -98,7 +95,6 @@ void timeMethods::deleteTime(int hours, int minutes, string meridiemAbbreviation
 	currentNode->next = nextNextNode;
 
 	cout << hours << ":" << minutes << " " << meridiemAbbreviation << " " << zoneName << " has been deleted." << endl << endl;
-	nodeCount--;
 	return;
 }
 
@@ -144,7 +140,6 @@ bool timeMethods::searchTime(int hours, int minutes, string meridiemAbbreviation
 
 // potential solution could be to split the HourToUTC function into three general regions (Americas, Europe, Asia)
 
-// the time zones checked for inside this function are based on those listed on https://www.timeanddate.com/time/current-number-time-zones.html
 int timeMethods::HourToUTC(int hours, string zoneName)
 {
 	int convertedHours = hours;
@@ -380,7 +375,6 @@ int timeMethods::HourToUTC(int hours, string zoneName)
 	return convertedHours;
 }
 
-// time zones checked for in this function are based on those listed on https://www.timeanddate.com/time/current-number-time-zones.html
 int timeMethods::MinuteToUTC(int minutes, string zoneName)
 {
 	int convertedMinutes = minutes;
@@ -454,7 +448,6 @@ int timeMethods::MinuteToUTC(int minutes, string zoneName)
 	return convertedMinutes;
 }
 
-// these two functions do not work properly
 int timeMethods::convertHourUTCtoZoneHour(int hours, string desiredZone)
 {
 	int convertedHours = hours;
@@ -762,4 +755,31 @@ int timeMethods::convertMinuteUTCtoZoneMinute(int minutes, string desiredZone)
 
 	return convertedMinutes;
 }
-//
+
+int timeMethods::setClockTypeTo12()
+{
+	if (clockType == 12)
+	{
+		cout << endl << "Clock type is already set to 12-Hour clock." << endl;
+	}
+	else
+	{
+		clockType = 12;
+		cout << endl << "Clock type is set to 12-Hour clock." << endl;
+	}
+	return clockType;
+}
+
+int timeMethods::setClockTypeTo24()
+{
+	if (clockType == 24)
+	{
+		cout << endl << "Clock type is already set to 24-Hour clock." << endl;
+	}
+	else
+	{
+		clockType = 24;
+		cout << endl << "Clock type is set to 24-Hour clock." << endl;
+	}
+	return clockType;
+}

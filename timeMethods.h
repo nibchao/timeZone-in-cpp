@@ -1,6 +1,7 @@
 /*
 *  Created by: Nicholas Chao
 *  Purpose: To convert a time in one time zone to another time zone
+*  Accepted time zones in this program are based on the ones listed on https://www.timeanddate.com/time/current-number-time-zones.html
 */
 
 #ifndef TIMEMETHODS_H
@@ -22,14 +23,14 @@ private:
 		Node* next;
 	};
 
-	int nodeCount = 0;
 	Node* head;
+	int clockType;
 
 public:
 	timeMethods()
 	{
-		nodeCount = 0;
 		head = nullptr;
+		clockType = 12;
 	}
 
 	~timeMethods();
@@ -43,5 +44,8 @@ public:
 	int MinuteToUTC(int, string);
 	int convertHourUTCtoZoneHour(int, string);
 	int convertMinuteUTCtoZoneMinute(int, string);
+
+	int setClockTypeTo12();
+	int setClockTypeTo24();
 };
 #endif
