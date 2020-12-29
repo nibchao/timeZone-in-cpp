@@ -294,6 +294,17 @@ int validConvertedHour(int hours)
 	{
 		hours = 12;
 	}
+
+	// possible code to validate the hours on 24-hour clock? need to test numbers to make sure
+	/*if (hours < 0)
+	{
+		hours = hours * -1;
+	}
+	if (hours > 24)
+	{
+		hours = hours % 24;
+	}*/
+
 	return hours;
 }
 
