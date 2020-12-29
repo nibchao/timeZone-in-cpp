@@ -783,3 +783,8 @@ int timeMethods::setClockTypeTo24()
 	}
 	return clockType;
 }
+
+int timeMethods::getClockType()
+{
+	return clockType;
+}

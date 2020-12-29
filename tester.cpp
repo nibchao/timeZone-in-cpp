@@ -23,6 +23,7 @@ string validMeridiem();
 int validClockType();
 
 int validConvertedHour(int);
+string validConvertedHour(int, string);
 int validConvertedMinute(int);
 
 int main()
@@ -89,6 +90,7 @@ int main()
 				minuteUTC = validConvertedMinute(minuteUTC);
 
 				hourDesired = time.convertHourUTCtoZoneHour(hourUTC, zoneDesired);
+				meridiemDesired = validConvertedHour(hourDesired, meridiemDesired);
 				hourDesired = validConvertedHour(hourDesired);
 				minuteDesired = time.convertMinuteUTCtoZoneMinute(minuteUTC, zoneDesired);
 				minuteDesired = validConvertedMinute(minuteDesired);
@@ -102,6 +104,12 @@ int main()
 			cout << endl;
 			break;
 		case 5: // choose between 12-hour clock and 24-hour clock
+
+
+			// NEED TO ADD A VERSION OF ALL FUNCTIONS THAT ACCOMPLISH A SIMILAR FUNCTION, BUT IGNORE AM/PM (MERIDIEM) IN THE CASE FOR 24-HOUR CLOCK TYPE AND THIS ALSO INCLUDES CHANGING THE IF-STATEMENT CONDITIONS IN THE VALIDCONVERTEDHOUR FUNCTIONS AT THE BOTTOM OF THIS FILE
+			// WILL NEED TO USE THE GET CLOCKTYPE FUNCTION IN TIMEMETHODS.CPP TO CALL DIFFERENT VERSIONS OF THE FUNCTIONS IN EACH OF THE CASES OF THIS SWITCH STATEMENT
+
+
 			clockHourType = validClockType();
 			if (clockHourType == 12)
 			{
@@ -267,49 +275,51 @@ int validClockType()
 	return clockHourType;
 }
 
+// used when validating converted hour to UTC
 int validConvertedHour(int hours)
 {
-	//if (hours < 0) // check if hours is negative first
-	//{
-	//	hours = hours * -1;
-	//}
-	//if (hours == 0) // check if hours is 0
-	//{
-	//	hours = 12;
-	//}
-	//if (hours > 12) // check if hours is greater than 12
-	//{
-	//	hours = hours % 12;
-	//}
-	//if (hours == 0) // check if hours is 0 again
-	//{
-	//	hours = 12;
-	//}
-
-	// need to maybe add switch statement inside this function to either run the hours argument through the above if-statements (to validate UTC hour) or below if-statements (to validate desired tome zone hour)
-
-	//if (hourDesired < 0) // check if hourDesired is negative first
-	//{
-	//	hourDesired = hourDesired * -1;
-	//}
-	//if (hourDesired == 0) // check if hourDesired is 0
-	//{
-	//	hourDesired = 12;
-	//	meridiemDesired = "AM";
-	//}
-	//meridiemDesired = "AM";
-	//if (hourDesired > 12) // check if hourDesired is greater than 12
-	//{
-	//	hourDesired = hourDesired % 12;
-	//	meridiemDesired = "PM";
-	//}
-	//if (hourDesired == 0) // check if hourDesired is 0 again
-	//{
-	//	hourDesired = 12;
-	//	meridiemDesired = "AM";
-	//}
-
+	if (hours < 0) // check if hours is negative first
+	{
+		hours = hours * -1;
+	}
+	if (hours == 0) // check if hours is 0
+	{
+		hours = 12;
+	}
+	if (hours > 12) // check if hours is greater than 12
+	{
+		hours = hours % 12;
+	}
+	if (hours == 0) // check if hours is 0 again
+	{
+		hours = 12;
+	}
 	return hours;
+}
+
+// used when validating converted hour to desired time zone
+string validConvertedHour(int hours, string meridiemDesired) // overloaded function of validConvertedHour
+{
+	meridiemDesired = "AM";
+	if (hours < 0) // check if hours is negative first
+	{
+		hours = hours * -1;
+	}
+	if (hours == 0) // check if hours is 0
+	{
+		hours = 12;
+	}
+	if (hours > 12) // check if hours is greater than 12
+	{
+		hours = hours % 12;
+		meridiemDesired = "PM";
+	}
+	if (hours == 0) // check if hours is 0 again
+	{
+		hours = 12;
+		meridiemDesired = "AM";
+	}
+	return meridiemDesired;
 }
 
 int validConvertedMinute(int minutes)

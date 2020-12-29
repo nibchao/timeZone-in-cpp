@@ -47,5 +47,6 @@ public:
 
 	int setClockTypeTo12();
 	int setClockTypeTo24();
+	int getClockType();
 };
 #endif
