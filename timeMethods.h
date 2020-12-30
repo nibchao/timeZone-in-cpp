@@ -36,17 +36,25 @@ public:
 	~timeMethods();
 
 	void storeTime(int, int, string, string);
+	void storeTime(int, int, string);
+
 	void deleteTime(int, int, string, string);
+	void deleteTime(int, int, string);
+
 	void displayStoredTimes() const;
+
 	bool searchTime(int, int, string, string);
+	bool searchTime(int, int, string);
 
 	int HourToUTC(int, string);
 	int MinuteToUTC(int, string);
+
 	int convertHourUTCtoZoneHour(int, string);
 	int convertMinuteUTCtoZoneMinute(int, string);
 
 	int setClockTypeTo12();
 	int setClockTypeTo24();
+
 	int getClockType();
 };
 #endif

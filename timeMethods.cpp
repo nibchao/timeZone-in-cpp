@@ -61,6 +61,42 @@ void timeMethods::storeTime(int hours, int minutes, string meridiemAbbreviation,
 	cout << endl << hours << ":" << minutes << " " << meridiemAbbreviation << " " << zoneName << " has been stored." << endl << endl;
 }
 
+void timeMethods::storeTime(int hours, int minutes, string zoneName)
+{
+	if (hours < 0)
+	{
+		cout << "Error: The time value for hours, " << hours << " is negative which is not an accepted input (no negative time values)." << "No time was stored." << endl;
+		return;
+	}
+	if (minutes < 0)
+	{
+		cout << "Error: The time value for minutes, " << minutes << " is negative which is not an accepted input (no negative time values)." << "No time was stored." << endl;
+		return;
+	}
+
+	Node* newNode = new Node;
+	newNode->hour = hours;
+	newNode->minute = minutes;
+	newNode->zone = zoneName;
+	newNode->next = nullptr;
+
+	Node* currentNode = head;
+
+	if (head == nullptr)
+	{
+		head = newNode;
+	}
+	else
+	{
+		while (currentNode->next)
+		{
+			currentNode = currentNode->next;
+		}
+		currentNode->next = newNode;
+	}
+	cout << endl << hours << ":" << minutes << " " << zoneName << " has been stored." << endl << endl;
+}
+
 void timeMethods::deleteTime(int hours, int minutes, string meridiemAbbreviation, string zoneName)
 {
 	Node* currentNode = head;
@@ -95,7 +131,42 @@ void timeMethods::deleteTime(int hours, int minutes, string meridiemAbbreviation
 	currentNode->next = nextNextNode;
 
 	cout << hours << ":" << minutes << " " << meridiemAbbreviation << " " << zoneName << " has been deleted." << endl << endl;
-	return;
+}
+
+void timeMethods::deleteTime(int hours, int minutes, string zoneName)
+{
+	Node* currentNode = head;
+
+	if (!head)
+	{
+		cout << "There were no times added so no times were deleted." << endl << endl;
+		return;
+	}
+
+	if (head->hour == hours && head->minute == minutes && head->zone == zoneName)
+	{
+		head = currentNode->next;
+		delete(currentNode);
+		cout << hours << ":" << minutes << " " << zoneName << " has been deleted." << endl << endl;
+		return;
+	}
+
+	while (currentNode != nullptr && currentNode->next->hour != hours && currentNode->next->minute != minutes && currentNode->next->zone != zoneName)
+	{
+		currentNode = currentNode->next;
+	}
+
+	if (currentNode == nullptr || currentNode->next == nullptr)
+	{
+		cout << "The time to be deleted was out of bounds or does not exist." << endl << endl;
+		return;
+	}
+
+	Node* nextNextNode = currentNode->next->next;
+	delete(currentNode->next);
+	currentNode->next = nextNextNode;
+
+	cout << hours << ":" << minutes << " " << zoneName << " has been deleted." << endl << endl;
 }
 
 void timeMethods::displayStoredTimes() const
@@ -124,6 +195,29 @@ bool timeMethods::searchTime(int hours, int minutes, string meridiemAbbreviation
 	while (currentNode)
 	{
 		if (currentNode->hour == hours && currentNode->minute == minutes && currentNode->meridiem == meridiemAbbreviation && currentNode->zone == zoneName)
+		{
+			cout << "Specified time was found in the list of stored times." << endl;
+			return true;
+		}
+		currentNode = currentNode->next;
+	}
+	cout << "Specified time was not found in the list of stored times." << endl;
+	return false;
+}
+
+bool timeMethods::searchTime(int hours, int minutes, string zoneName)
+{
+	Node* currentNode = head;
+
+	if (head == nullptr)
+	{
+		cout << "There were no stored times found." << endl;
+		return false;
+	}
+
+	while (currentNode)
+	{
+		if (currentNode->hour == hours && currentNode->minute == minutes && currentNode->zone == zoneName)
 		{
 			cout << "Specified time was found in the list of stored times." << endl;
 			return true;

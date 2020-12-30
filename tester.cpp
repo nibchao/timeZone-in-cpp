@@ -22,7 +22,7 @@ bool confirmDelete();
 string validMeridiem();
 int validClockType();
 
-int validConvertedHour(int);
+int validConvertedHour(int, int);
 string validConvertedHour(int, string);
 int validConvertedMinute(int);
 
@@ -54,48 +54,103 @@ int main()
 		switch (response)
 		{
 		case 1: // store a time
-			hours = validHours();
-			minutes = validMinutes();
-			meridiem = validMeridiem();
-			zoneName = validZone();
-			time.storeTime(hours, minutes, meridiem, zoneName);
+			if (time.getClockType() == 12)
+			{
+				cout << "Storing time in 12-Hour format:" << endl;
+				hours = validHours();
+				minutes = validMinutes();
+				meridiem = validMeridiem();
+				zoneName = validZone();
+				time.storeTime(hours, minutes, meridiem, zoneName);
+			}
+			else
+			{
+				cout << "Storing time in 24-Hour format:" << endl;
+				hours = validHours();
+				minutes = validMinutes();
+				zoneName = validZone();
+				time.storeTime(hours, minutes, zoneName);
+			}
 			break;
 		case 2: // delete a time
-			hours = validHours();
-			minutes = validMinutes();
-			meridiem = validMeridiem();
-			zoneName = validZone();
-			time.deleteTime(hours, minutes, meridiem, zoneName);
+			if (time.getClockType() == 12)
+			{
+				hours = validHours();
+				minutes = validMinutes();
+				meridiem = validMeridiem();
+				zoneName = validZone();
+				time.deleteTime(hours, minutes, meridiem, zoneName);
+			}
+			else
+			{
+				hours = validHours();
+				minutes = validMinutes();
+				zoneName = validZone();
+				time.deleteTime(hours, minutes, zoneName);
+			}
 			break;
 		case 3: // convert a time to another time zone
-			cout << "Enter the hours, minutes, AM/PM, and time zone of the time you would like to convert." << endl;
-			hours = validHours();
-			minutes = validMinutes();
-			meridiem = validMeridiem();
-			zoneName = validZone();
-
-			if (time.searchTime(hours, minutes, meridiem, zoneName) == true)
+			if (time.getClockType() == 12)
 			{
-				cout << "Input the time zone abbrevation you would like to convert the time to: " << endl;
-				zoneDesired = validZone();
-				if (zoneDesired == zoneName)
+				cout << "Enter the hours, minutes, AM/PM, and time zone of the time you would like to convert." << endl;
+				hours = validHours();
+				minutes = validMinutes();
+				meridiem = validMeridiem();
+				zoneName = validZone();
+
+				if (time.searchTime(hours, minutes, meridiem, zoneName) == true)
 				{
-					cout << "Error: Desired time zone is the same as the stored time." << endl;
-					break;
+					cout << "Input the time zone abbrevation you would like to convert the time to: " << endl;
+					zoneDesired = validZone();
+					if (zoneDesired == zoneName)
+					{
+						cout << "Error: Desired time zone is the same as the stored time." << endl;
+						break;
+					}
+
+					hourUTC = time.HourToUTC(hours, zoneName);
+					hourUTC = validConvertedHour(hourUTC, time.getClockType());
+					minuteUTC = time.MinuteToUTC(minutes, zoneName);
+					minuteUTC = validConvertedMinute(minuteUTC);
+
+					hourDesired = time.convertHourUTCtoZoneHour(hourUTC, zoneDesired);
+					meridiemDesired = validConvertedHour(hourDesired, meridiem);
+					hourDesired = validConvertedHour(hourDesired, time.getClockType());
+					minuteDesired = time.convertMinuteUTCtoZoneMinute(minuteUTC, zoneDesired);
+					minuteDesired = validConvertedMinute(minuteDesired);
+
+					cout << hours << ":" << minutes << " " << meridiem << " " << zoneName << " is " << hourDesired << ":" << minuteDesired << " " << meridiemDesired << " " << zoneDesired << endl << endl;
 				}
+			}
+			else
+			{
+				cout << "Enter the hours, minutes, and time zone of the time you would like to convert." << endl;
+				hours = validHours();
+				minutes = validMinutes();
+				zoneName = validZone();
 
-				hourUTC = time.HourToUTC(hours, zoneName);
-				hourUTC = validConvertedHour(hourUTC);
-				minuteUTC = time.MinuteToUTC(minutes, zoneName);
-				minuteUTC = validConvertedMinute(minuteUTC);
+				if (time.searchTime(hours, minutes, zoneName) == true)
+				{
+					cout << "Input the time zone abbrevation you would like to convert the time to: " << endl;
+					zoneDesired = validZone();
+					if (zoneDesired == zoneName)
+					{
+						cout << "Error: Desired time zone is the same as the stored time." << endl;
+						break;
+					}
 
-				hourDesired = time.convertHourUTCtoZoneHour(hourUTC, zoneDesired);
-				meridiemDesired = validConvertedHour(hourDesired, meridiemDesired);
-				hourDesired = validConvertedHour(hourDesired);
-				minuteDesired = time.convertMinuteUTCtoZoneMinute(minuteUTC, zoneDesired);
-				minuteDesired = validConvertedMinute(minuteDesired);
+					hourUTC = time.HourToUTC(hours, zoneName);
+					hourUTC = validConvertedHour(hourUTC, time.getClockType());
+					minuteUTC = time.MinuteToUTC(minutes, zoneName);
+					minuteUTC = validConvertedMinute(minuteUTC);
 
-				cout << hours << ":" << minutes << " " << meridiem << " " << zoneName << " in " << zoneDesired << " is " << hourDesired << ":" << minuteDesired << " " << meridiemDesired << " " << zoneDesired << endl << endl;
+					hourDesired = time.convertHourUTCtoZoneHour(hourUTC, zoneDesired);
+					hourDesired = validConvertedHour(hourDesired, time.getClockType());
+					minuteDesired = time.convertMinuteUTCtoZoneMinute(minuteUTC, zoneDesired);
+					minuteDesired = validConvertedMinute(minuteDesired);
+
+					cout << hours << ":" << minutes << " " << zoneName << " is " << hourDesired << ":" << minuteDesired << " " << zoneDesired << endl << endl;
+				}
 			}
 			break;
 		case 4: // display times stored
@@ -104,12 +159,6 @@ int main()
 			cout << endl;
 			break;
 		case 5: // choose between 12-hour clock and 24-hour clock
-
-
-			// NEED TO ADD A VERSION OF ALL FUNCTIONS THAT ACCOMPLISH A SIMILAR FUNCTION, BUT IGNORE AM/PM (MERIDIEM) IN THE CASE FOR 24-HOUR CLOCK TYPE AND THIS ALSO INCLUDES CHANGING THE IF-STATEMENT CONDITIONS IN THE VALIDCONVERTEDHOUR FUNCTIONS AT THE BOTTOM OF THIS FILE
-			// WILL NEED TO USE THE GET CLOCKTYPE FUNCTION IN TIMEMETHODS.CPP TO CALL DIFFERENT VERSIONS OF THE FUNCTIONS IN EACH OF THE CASES OF THIS SWITCH STATEMENT
-
-
 			clockHourType = validClockType();
 			if (clockHourType == 12)
 			{
@@ -191,6 +240,8 @@ int validMinutes()
 	cin.clear();
 	cin.ignore(10000, '\n');
 
+	// NEED TO ADD VALIDATION FOR WHEN USER ONLY ENTERS JUST 1 '0' BECAUSE 1 '0' IS ACCEPTED AND TIME IS NOT WRITTEN LIKE 11:0 AM; MAYBE IF ONLY '0' IS INPUTTED, AUTOMATICALLY FORMAT TO 2 '0'?
+
 	while (minutes < MIN_TIME_VALUE)
 	{
 		cout << endl << "Error: A negative value was found for minutes. No negative time values allowed." << endl;
@@ -207,6 +258,8 @@ string validZone()
 	string zoneName = "";
 	cout << "Enter time zone abbreviation: ";
 	getline(cin, zoneName);
+
+	// NEED TO ADD VALIDATION AND ACCEPT ONLY LETTERS; INTEGERS ARE ACCEPTED WHEN THEY SHOULDN'T, maybe look at first letter of all time zones checked in timeMethods.cpp and check for it in the first position of user input below?
 
 	while (zoneName == "" || zoneName.find_first_not_of(' ') || zoneName.length() > MAX_TIME_ZONE_ABBREVIATION_LENGTH)
 	{
@@ -254,6 +307,7 @@ string validMeridiem()
 	return meridiem;
 }
 
+// NEED TO ADD VALIDATION FOR WHERE THIS CANNOT BE DONE IF A STORED TIME WAS FOUND - EXAMPLE IF I STORED A TIME IN 12-HOUR TYPE AND THEN WANTED TO SWITCH TO 24-HOUR TYPE; THIS SHOULD NOT BE ALLOWED UNLESS THE STORED TIME IS REMOVED OR DESTRUCTOR IS USED
 int validClockType()
 {
 	int clockHourType = 0;
@@ -276,42 +330,54 @@ int validClockType()
 }
 
 // used when validating converted hour to UTC
-int validConvertedHour(int hours)
+int validConvertedHour(int hours, int clockHourType)
 {
-	if (hours < 0) // check if hours is negative first
+	if (clockHourType == 12)
 	{
-		hours = hours * -1;
+		if (hours < 0) // check if hours is negative first
+		{
+			hours = hours * -1;
+		}
+		if (hours == 0) // check if hours is 0
+		{
+			hours = 12;
+		}
+		if (hours > 12) // check if hours is greater than 12
+		{
+			hours = hours % 12;
+		}
+		if (hours == 0) // check if hours is 0 again
+		{
+			hours = 12;
+		}
 	}
-	if (hours == 0) // check if hours is 0
+	else
 	{
-		hours = 12;
+		if (hours < 0) // check if hours is negative first
+		{
+			hours = hours * -1;
+		}
+		if (hours == 24)
+		{
+			hours = 0;
+		}
+		if (hours > 24) // check if hours is greater than 24
+		{
+			hours = hours % 24;
+		}
+		if (hours == 24)
+		{
+			hours = 0;
+		}
 	}
-	if (hours > 12) // check if hours is greater than 12
-	{
-		hours = hours % 12;
-	}
-	if (hours == 0) // check if hours is 0 again
-	{
-		hours = 12;
-	}
-
-	// possible code to validate the hours on 24-hour clock? need to test numbers to make sure
-	/*if (hours < 0)
-	{
-		hours = hours * -1;
-	}
-	if (hours > 24)
-	{
-		hours = hours % 24;
-	}*/
-
 	return hours;
 }
+
+// this does not work as intended - example is converting 11 AM PST to EST gives 2 AM EST
 
 // used when validating converted hour to desired time zone
 string validConvertedHour(int hours, string meridiemDesired) // overloaded function of validConvertedHour
 {
-	meridiemDesired = "AM";
 	if (hours < 0) // check if hours is negative first
 	{
 		hours = hours * -1;
@@ -335,11 +401,11 @@ string validConvertedHour(int hours, string meridiemDesired) // overloaded funct
 
 int validConvertedMinute(int minutes)
 {
-	if (minutes < 0) // check if minuteUTC is negative first
+	if (minutes < 0) // check if minutes is negative first
 	{
 		minutes = minutes * -1;
 	}
-	if (minutes > 60) // check if minuteUTC is greater than 60
+	if (minutes > 60) // check if minutes is greater than 60
 	{
 		minutes = minutes % 60;
 	}
