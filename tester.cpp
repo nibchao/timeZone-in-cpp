@@ -108,18 +108,31 @@ int main()
 						break;
 					}
 
-					hourUTC = time.HourToUTC(hours, zoneName);
-					hourUTC = validConvertedHour(hourUTC, time.getClockType());
-					minuteUTC = time.MinuteToUTC(minutes, zoneName);
-					minuteUTC = validConvertedMinute(minuteUTC);
+					// maybe make a third method (maybe overload HourToUTC) and its purpose is to return the UTC meridiem which is then used as the meridiemDesired/meridiem ? not sure
+					// below example assumes 11:00 AM PST want to convert to 2:00 PM EST
+					hourUTC = time.HourToUTC(hours, zoneName); // 11 PST -> 7 UTC
+					hourUTC = validConvertedHour(hourUTC, time.getClockType()); // yes, hourUTC is a valid hour value
+					minuteUTC = time.MinuteToUTC(minutes, zoneName); // 00 PST -> 00 UTC
+					minuteUTC = validConvertedMinute(minuteUTC); // yes, minuteUTC is a valid minute value
 
-					hourDesired = time.convertHourUTCtoZoneHour(hourUTC, zoneDesired);
-					meridiemDesired = validConvertedHour(hourDesired, meridiem);
-					hourDesired = validConvertedHour(hourDesired, time.getClockType());
-					minuteDesired = time.convertMinuteUTCtoZoneMinute(minuteUTC, zoneDesired);
-					minuteDesired = validConvertedMinute(minuteDesired);
+					hourDesired = time.convertHourUTCtoZoneHour(hourUTC, zoneDesired); // 7 UTC -> 2 EST
 
-					cout << hours << ":" << minutes << " " << meridiem << " " << zoneName << " is " << hourDesired << ":" << minuteDesired << " " << meridiemDesired << " " << zoneDesired << endl << endl;
+
+					meridiemDesired = validConvertedHour(hourDesired, meridiem); // returns 'meridiemDesired' which is equal to 'meridiem' which has a value of 'AM' because hourDesired (2) fails all of the if-statements 
+
+
+					hourDesired = validConvertedHour(hourDesired, time.getClockType()); // yes, hourDesired is a valid hour value
+					minuteDesired = time.convertMinuteUTCtoZoneMinute(minuteUTC, zoneDesired); // 00 UTC -> 00 EST
+					minuteDesired = validConvertedMinute(minuteDesired); // yes, minuteDesired is a valid minute value
+
+					if (minutes < 10 && minuteDesired < 10)
+					{
+						cout << hours << ":0" << minutes << " " << meridiem << " " << zoneName << " is " << hourDesired << ":0" << minuteDesired << " " << meridiemDesired << " " << zoneDesired << endl << endl;
+					}
+					else
+					{
+						cout << hours << ":" << minutes << " " << meridiem << " " << zoneName << " is " << hourDesired << ":" << minuteDesired << " " << meridiemDesired << " " << zoneDesired << endl << endl;
+					}
 				}
 			}
 			else
@@ -149,7 +162,14 @@ int main()
 					minuteDesired = time.convertMinuteUTCtoZoneMinute(minuteUTC, zoneDesired);
 					minuteDesired = validConvertedMinute(minuteDesired);
 
-					cout << hours << ":" << minutes << " " << zoneName << " is " << hourDesired << ":" << minuteDesired << " " << zoneDesired << endl << endl;
+					if (minutes < 10 && minuteDesired < 10)
+					{
+						cout << hours << ":0" << minutes << " " << zoneName << " is " << hourDesired << ":0" << minuteDesired << " " << zoneDesired << endl << endl;
+					}
+					else
+					{
+						cout << hours << ":" << minutes << " " << zoneName << " is " << hourDesired << ":" << minuteDesired << " " << zoneDesired << endl << endl;
+					}
 				}
 			}
 			break;
@@ -239,8 +259,6 @@ int validMinutes()
 	cin >> minutes;
 	cin.clear();
 	cin.ignore(10000, '\n');
-
-	// NEED TO ADD VALIDATION FOR WHEN USER ONLY ENTERS JUST 1 '0' BECAUSE 1 '0' IS ACCEPTED AND TIME IS NOT WRITTEN LIKE 11:0 AM; MAYBE IF ONLY '0' IS INPUTTED, AUTOMATICALLY FORMAT TO 2 '0'?
 
 	while (minutes < MIN_TIME_VALUE)
 	{

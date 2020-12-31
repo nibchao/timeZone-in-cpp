@@ -58,7 +58,14 @@ void timeMethods::storeTime(int hours, int minutes, string meridiemAbbreviation,
 		}
 		currentNode->next = newNode;
 	}
-	cout << endl << hours << ":" << minutes << " " << meridiemAbbreviation << " " << zoneName << " has been stored." << endl << endl;
+	if (minutes < 10)
+	{
+		cout << endl << hours << ":0" << minutes << " " << meridiemAbbreviation << " " << zoneName << " has been stored." << endl << endl;
+	}
+	else
+	{
+		cout << endl << hours << ":" << minutes << " " << meridiemAbbreviation << " " << zoneName << " has been stored." << endl << endl;
+	}
 }
 
 void timeMethods::storeTime(int hours, int minutes, string zoneName)
@@ -94,7 +101,15 @@ void timeMethods::storeTime(int hours, int minutes, string zoneName)
 		}
 		currentNode->next = newNode;
 	}
-	cout << endl << hours << ":" << minutes << " " << zoneName << " has been stored." << endl << endl;
+
+	if (minutes < 10)
+	{
+		cout << endl << hours << ":0" << minutes << " " << zoneName << " has been stored." << endl << endl;
+	}
+	else
+	{
+		cout << endl << hours << ":" << minutes << " " << zoneName << " has been stored." << endl << endl;
+	}
 }
 
 void timeMethods::deleteTime(int hours, int minutes, string meridiemAbbreviation, string zoneName)
@@ -130,7 +145,14 @@ void timeMethods::deleteTime(int hours, int minutes, string meridiemAbbreviation
 	delete(currentNode->next);
 	currentNode->next = nextNextNode;
 
-	cout << hours << ":" << minutes << " " << meridiemAbbreviation << " " << zoneName << " has been deleted." << endl << endl;
+	if (minutes < 10)
+	{
+		cout << hours << ":0" << minutes << " " << meridiemAbbreviation << " " << zoneName << " has been deleted." << endl << endl;
+	}
+	else
+	{
+		cout << hours << ":" << minutes << " " << meridiemAbbreviation << " " << zoneName << " has been deleted." << endl << endl;
+	}
 }
 
 void timeMethods::deleteTime(int hours, int minutes, string zoneName)
@@ -166,7 +188,14 @@ void timeMethods::deleteTime(int hours, int minutes, string zoneName)
 	delete(currentNode->next);
 	currentNode->next = nextNextNode;
 
-	cout << hours << ":" << minutes << " " << zoneName << " has been deleted." << endl << endl;
+	if (minutes < 10)
+	{
+		cout << hours << ":0" << minutes << " " << zoneName << " has been deleted." << endl << endl;
+	}
+	else
+	{
+		cout << hours << ":" << minutes << " " << zoneName << " has been deleted." << endl << endl;
+	}
 }
 
 void timeMethods::displayStoredTimes() const
@@ -176,7 +205,14 @@ void timeMethods::displayStoredTimes() const
 
 	while (currentNode)
 	{
-		cout << "(" << counter << ") " << currentNode->hour << ":" << currentNode->minute << " " << currentNode->meridiem << " " << currentNode->zone << endl;
+		if (currentNode->minute < 10)
+		{
+			cout << "(" << counter << ") " << currentNode->hour << ":0" << currentNode->minute << " " << currentNode->meridiem << " " << currentNode->zone << endl;
+		}
+		else
+		{
+			cout << "(" << counter << ") " << currentNode->hour << ":" << currentNode->minute << " " << currentNode->meridiem << " " << currentNode->zone << endl;
+		}
 		counter++;
 		currentNode = currentNode->next;
 	}
