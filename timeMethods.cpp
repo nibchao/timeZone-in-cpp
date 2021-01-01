@@ -102,9 +102,16 @@ void timeMethods::storeTime(int hours, int minutes, string zoneName)
 		currentNode->next = newNode;
 	}
 
-	if (minutes < 10)
+	if (hours < 10)
 	{
-		cout << endl << hours << ":0" << minutes << " " << zoneName << " has been stored." << endl << endl;
+		if (minutes < 10)
+		{
+			cout << endl << "0" << hours << ":0" << minutes << " " << zoneName << " has been stored." << endl << endl;
+		}
+		else
+		{
+			cout << endl << "0" << hours << ":" << minutes << " " << zoneName << " has been stored." << endl << endl;
+		}
 	}
 	else
 	{
@@ -203,19 +210,56 @@ void timeMethods::displayStoredTimes() const
 	Node* currentNode = head;
 	int counter = 0;
 
-	while (currentNode)
+	if (head == nullptr)
 	{
-		if (currentNode->minute < 10)
-		{
-			cout << "(" << counter << ") " << currentNode->hour << ":0" << currentNode->minute << " " << currentNode->meridiem << " " << currentNode->zone << endl;
-		}
-		else
-		{
-			cout << "(" << counter << ") " << currentNode->hour << ":" << currentNode->minute << " " << currentNode->meridiem << " " << currentNode->zone << endl;
-		}
-		counter++;
-		currentNode = currentNode->next;
+		cout << "There were no stored times found." << endl << endl;
+		return;
 	}
+
+	cout << "Displaying stored times ";
+
+	if (clockType == 12)
+	{
+		cout << "for " << clockType << "-Hour Clock Type:" << endl;
+		while (currentNode)
+		{
+			if (currentNode->minute < 10)
+			{
+				cout << "(" << counter << ") " << currentNode->hour << ":0" << currentNode->minute << " " << currentNode->meridiem << " " << currentNode->zone << endl;
+			}
+			else
+			{
+				cout << "(" << counter << ") " << currentNode->hour << ":" << currentNode->minute << " " << currentNode->meridiem << " " << currentNode->zone << endl;
+			}
+			counter++;
+			currentNode = currentNode->next;
+		}
+	}
+	else
+	{
+		cout << "for " << clockType << "-Hour Clock Type:" << endl;
+		while (currentNode)
+		{
+			if (currentNode->hour < 10)
+			{
+				if (currentNode->minute < 10)
+				{
+					cout << "(" << counter << ") 0" << currentNode->hour << ":0" << currentNode->minute << " " << currentNode->zone << endl;
+				}
+				else
+				{
+					cout << "(" << counter << ") 0" << currentNode->hour << ":" << currentNode->minute << " " << currentNode->zone << endl;
+				}
+			}
+			else
+			{
+				cout << "(" << counter << ") " << currentNode->hour << ":" << currentNode->minute << " " << currentNode->zone << endl;
+			}
+			counter++;
+			currentNode = currentNode->next;
+		}
+	}
+	cout << endl;
 }
 
 bool timeMethods::searchTime(int hours, int minutes, string meridiemAbbreviation, string zoneName)
@@ -917,4 +961,13 @@ int timeMethods::setClockTypeTo24()
 int timeMethods::getClockType()
 {
 	return clockType;
+}
+
+bool timeMethods::isEmpty()
+{
+	if (head == nullptr)
+	{
+		return true;
+	}
+	return false;
 }

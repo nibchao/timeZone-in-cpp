@@ -56,5 +56,7 @@ public:
 	int setClockTypeTo24();
 
 	int getClockType();
+
+	bool isEmpty();
 };
 #endif

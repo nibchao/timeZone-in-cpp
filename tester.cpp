@@ -8,19 +8,24 @@
 #include <string>
 #include <algorithm>
 #include "timeMethods.h"
+#include <sstream>
 
 using namespace std;
 
 const int MAX_TIME_ZONE_ABBREVIATION_LENGTH = 5;
 const int MIN_TIME_VALUE = 0;
+const int TWELVE_HOUR_CLOCK = 12;
+const int TWENTY_FOUR_HOUR_CLOCK = 24;
 
-int menu();
-int validHours();
+int menu(int);
+int validHours(int);
 int validMinutes();
 string validZone();
 bool confirmDelete();
 string validMeridiem();
-int validClockType();
+int validClockType(bool);
+
+bool noIntegersZoneName(string);
 
 int validConvertedHour(int, int);
 string validConvertedHour(int, string);
@@ -50,14 +55,16 @@ int main()
 
 	do
 	{
-		response = menu();
+		clockHourType = time.getClockType();
+		response = menu(clockHourType);
 		switch (response)
 		{
 		case 1: // store a time
-			if (time.getClockType() == 12)
+			if (time.getClockType() == TWELVE_HOUR_CLOCK)
 			{
 				cout << "Storing time in 12-Hour format:" << endl;
-				hours = validHours();
+				hours = validHours(time.getClockType());
+				hours = validConvertedHour(hours, time.getClockType());
 				minutes = validMinutes();
 				meridiem = validMeridiem();
 				zoneName = validZone();
@@ -66,16 +73,16 @@ int main()
 			else
 			{
 				cout << "Storing time in 24-Hour format:" << endl;
-				hours = validHours();
+				hours = validHours(time.getClockType());
 				minutes = validMinutes();
 				zoneName = validZone();
 				time.storeTime(hours, minutes, zoneName);
 			}
 			break;
 		case 2: // delete a time
-			if (time.getClockType() == 12)
+			if (time.getClockType() == TWELVE_HOUR_CLOCK)
 			{
-				hours = validHours();
+				hours = validHours(time.getClockType());
 				minutes = validMinutes();
 				meridiem = validMeridiem();
 				zoneName = validZone();
@@ -83,17 +90,17 @@ int main()
 			}
 			else
 			{
-				hours = validHours();
+				hours = validHours(time.getClockType());
 				minutes = validMinutes();
 				zoneName = validZone();
 				time.deleteTime(hours, minutes, zoneName);
 			}
 			break;
 		case 3: // convert a time to another time zone
-			if (time.getClockType() == 12)
+			if (time.getClockType() == TWELVE_HOUR_CLOCK)
 			{
 				cout << "Enter the hours, minutes, AM/PM, and time zone of the time you would like to convert." << endl;
-				hours = validHours();
+				hours = validHours(time.getClockType());
 				minutes = validMinutes();
 				meridiem = validMeridiem();
 				zoneName = validZone();
@@ -137,54 +144,52 @@ int main()
 			}
 			else
 			{
-				cout << "Enter the hours, minutes, and time zone of the time you would like to convert." << endl;
-				hours = validHours();
-				minutes = validMinutes();
-				zoneName = validZone();
+			cout << "Enter the hours, minutes, and time zone of the time you would like to convert." << endl;
+			hours = validHours(time.getClockType());
+			minutes = validMinutes();
+			zoneName = validZone();
 
-				if (time.searchTime(hours, minutes, zoneName) == true)
+			if (time.searchTime(hours, minutes, zoneName) == true)
+			{
+				cout << "Input the time zone abbrevation you would like to convert the time to: " << endl;
+				zoneDesired = validZone();
+				if (zoneDesired == zoneName)
 				{
-					cout << "Input the time zone abbrevation you would like to convert the time to: " << endl;
-					zoneDesired = validZone();
-					if (zoneDesired == zoneName)
-					{
-						cout << "Error: Desired time zone is the same as the stored time." << endl;
-						break;
-					}
-
-					hourUTC = time.HourToUTC(hours, zoneName);
-					hourUTC = validConvertedHour(hourUTC, time.getClockType());
-					minuteUTC = time.MinuteToUTC(minutes, zoneName);
-					minuteUTC = validConvertedMinute(minuteUTC);
-
-					hourDesired = time.convertHourUTCtoZoneHour(hourUTC, zoneDesired);
-					hourDesired = validConvertedHour(hourDesired, time.getClockType());
-					minuteDesired = time.convertMinuteUTCtoZoneMinute(minuteUTC, zoneDesired);
-					minuteDesired = validConvertedMinute(minuteDesired);
-
-					if (minutes < 10 && minuteDesired < 10)
-					{
-						cout << hours << ":0" << minutes << " " << zoneName << " is " << hourDesired << ":0" << minuteDesired << " " << zoneDesired << endl << endl;
-					}
-					else
-					{
-						cout << hours << ":" << minutes << " " << zoneName << " is " << hourDesired << ":" << minuteDesired << " " << zoneDesired << endl << endl;
-					}
+					cout << "Error: Desired time zone is the same as the stored time." << endl;
+					break;
 				}
+
+				hourUTC = time.HourToUTC(hours, zoneName);
+				hourUTC = validConvertedHour(hourUTC, time.getClockType());
+				minuteUTC = time.MinuteToUTC(minutes, zoneName);
+				minuteUTC = validConvertedMinute(minuteUTC);
+
+				hourDesired = time.convertHourUTCtoZoneHour(hourUTC, zoneDesired);
+				hourDesired = validConvertedHour(hourDesired, time.getClockType());
+				minuteDesired = time.convertMinuteUTCtoZoneMinute(minuteUTC, zoneDesired);
+				minuteDesired = validConvertedMinute(minuteDesired);
+
+				if (minutes < 10 && minuteDesired < 10)
+				{
+					cout << hours << ":0" << minutes << " " << zoneName << " is " << hourDesired << ":0" << minuteDesired << " " << zoneDesired << endl << endl;
+				}
+				else
+				{
+					cout << hours << ":" << minutes << " " << zoneName << " is " << hourDesired << ":" << minuteDesired << " " << zoneDesired << endl << endl;
+				}
+			}
 			}
 			break;
 		case 4: // display times stored
-			cout << endl << "Displaying the stored times:" << endl;
 			time.displayStoredTimes();
-			cout << endl;
 			break;
 		case 5: // choose between 12-hour clock and 24-hour clock
-			clockHourType = validClockType();
-			if (clockHourType == 12)
+			clockHourType = validClockType(time.isEmpty());
+			if (clockHourType == TWELVE_HOUR_CLOCK)
 			{
 				time.setClockTypeTo12();
 			}
-			else
+			else if (clockHourType == TWENTY_FOUR_HOUR_CLOCK)
 			{
 				time.setClockTypeTo24();
 			}
@@ -192,6 +197,10 @@ int main()
 			break;
 		case 6: // exit
 			cout << "Exiting program.";
+			break;
+		case 99: // testing
+			hours = validHours(time.getClockType());
+			cout << hours << endl;
 			break;
 		case 10: // destructor option
 			if (confirmDelete() == true)
@@ -214,7 +223,7 @@ int main()
 	return 0;
 }
 
-int menu()
+int menu(int clockHourType)
 {
 	int response = 0;
 
@@ -222,32 +231,55 @@ int menu()
 	cout << "2. Delete a time" << endl;
 	cout << "3. Convert a time to a specific time zone" << endl;
 	cout << "4. Display all times stored" << endl;
-	cout << "5. Select 12-Hour Clock or 24-Hour Clock (DEFAULT: 12-HOUR CLOCK)" << endl;
+	cout << "5. Select 12-Hour Clock or 24-Hour Clock (Currently set to: " << clockHourType << ")" << endl;
 	cout << "6. Exit" << endl;
-	cout << "10. DELETE ALL STORED TIMES" << endl;
+	cout << "10. DELETE ALL STORED TIMES" << endl << endl;
 
-	cout << endl << "Enter your input: ";
+	cout << "Enter your input: ";
 	cin >> response;
 	cin.clear();
 	cin.ignore(10000, '\n');
 	return response;
 }
 
-int validHours()
+int validHours(int clockHourType)
 {
 	int hours = 0;
-	cout << "Enter hours: ";
-	cin >> hours;
-	cin.clear();
-	cin.ignore(10000, '\n');
+	string str = "";
 
-	while (hours < MIN_TIME_VALUE)
+	cout << "Enter hours: ";
+
+	if (clockHourType == TWELVE_HOUR_CLOCK)
 	{
-		cout << endl << "Error: A negative value was found for hours. No negative time values allowed." << endl;
-		cout << endl << "Enter hours: ";
-		cin >> hours;
-		cin.clear();
-		cin.ignore(10000, '\n');
+		while (getline(cin, str))
+		{
+			stringstream stream(str);
+			if (stream >> hours)
+			{
+				if (stream.eof() && hours > MIN_TIME_VALUE)
+				{
+					break;
+				}
+			}
+			cout << endl << "Error: A zero or negative hour value was found or a non-integer was found in input." << endl;
+			cout << endl << "Enter hours: ";
+		}
+	}
+	else
+	{
+		while (getline(cin, str))
+		{
+			stringstream stream(str);
+			if (stream >> hours)
+			{
+				if (stream.eof() && hours >= MIN_TIME_VALUE)
+				{
+					break;
+				}
+			}
+			cout << endl << "Error: A negative hour value was found or non-integers were found." << endl;
+			cout << endl << "Enter hours: ";
+		}
 	}
 	return hours;
 }
@@ -255,18 +287,22 @@ int validHours()
 int validMinutes()
 {
 	int minutes = 0;
-	cout << "Enter minutes: ";
-	cin >> minutes;
-	cin.clear();
-	cin.ignore(10000, '\n');
+	string str = "";
 
-	while (minutes < MIN_TIME_VALUE)
+	cout << "Enter minutes: ";
+	
+	while (getline(cin, str))
 	{
-		cout << endl << "Error: A negative value was found for minutes. No negative time values allowed." << endl;
+		stringstream stream(str);
+		if (stream >> minutes)
+		{
+			if (stream.eof() && minutes >= MIN_TIME_VALUE)
+			{
+				break;
+			}
+		}
+		cout << endl << "Error: A negative minute value was found or non-integers were found." << endl;
 		cout << endl << "Enter minutes: ";
-		cin >> minutes;
-		cin.clear();
-		cin.ignore(10000, '\n');
 	}
 	return minutes;
 }
@@ -277,11 +313,9 @@ string validZone()
 	cout << "Enter time zone abbreviation: ";
 	getline(cin, zoneName);
 
-	// NEED TO ADD VALIDATION AND ACCEPT ONLY LETTERS; INTEGERS ARE ACCEPTED WHEN THEY SHOULDN'T, maybe look at first letter of all time zones checked in timeMethods.cpp and check for it in the first position of user input below?
-
-	while (zoneName == "" || zoneName.find_first_not_of(' ') || zoneName.length() > MAX_TIME_ZONE_ABBREVIATION_LENGTH)
+	while (zoneName == "" || zoneName.find_first_not_of(' ') || zoneName.length() > MAX_TIME_ZONE_ABBREVIATION_LENGTH || noIntegersZoneName(zoneName) == false)
 	{
-		cout << endl << "Error: Time zone name is too long (maximum of 5 characters) or blank characters were found." << endl;
+		cout << endl << "Error: Time zone name is too long (maximum of 5 characters), blank characters were found, or integers were found." << endl;
 		cout << endl << "Enter time zone abbrevation: ";
 		getline(cin, zoneName);
 	}
@@ -325,24 +359,29 @@ string validMeridiem()
 	return meridiem;
 }
 
-// NEED TO ADD VALIDATION FOR WHERE THIS CANNOT BE DONE IF A STORED TIME WAS FOUND - EXAMPLE IF I STORED A TIME IN 12-HOUR TYPE AND THEN WANTED TO SWITCH TO 24-HOUR TYPE; THIS SHOULD NOT BE ALLOWED UNLESS THE STORED TIME IS REMOVED OR DESTRUCTOR IS USED
-int validClockType()
+int validClockType(bool empty)
 {
 	int clockHourType = 0;
 
-	cout << "Enter '12' to select the 12-Hour clock type or enter '24' to select the 24-Hour clock type." << endl;
-	cin >> clockHourType;
-	cin.clear();
-	cin.ignore(10000, '\n');
-
-	while (clockHourType != 12 && clockHourType != 24)
+	if (empty == true)
 	{
-		cout << endl << "Error: Input was not a valid input (12 or 24)." << endl;
-		cout << "Enter 12 to choose 12-hour clock type" << endl;
-		cout << "Enter 24 to choose 24-hour clock type" << endl;
+		cout << "Enter '12' to select the 12-Hour clock type or enter '24' to select the 24-Hour clock type." << endl;
 		cin >> clockHourType;
 		cin.clear();
 		cin.ignore(10000, '\n');
+
+		while (clockHourType != TWELVE_HOUR_CLOCK && clockHourType != TWENTY_FOUR_HOUR_CLOCK)
+		{
+			cout << endl << "Error: Input was not an accepted input (12 or 24)." << endl;
+			cout << "Enter '12' to select the 12-Hour clock type or enter '24' to select the 24-Hour clock type." << endl;
+			cin >> clockHourType;
+			cin.clear();
+			cin.ignore(10000, '\n');
+		}
+	}
+	else
+	{
+		cout << "There were stored times found so the clock type cannot be changed until all stored times are deleted." << endl;
 	}
 	return clockHourType;
 }
@@ -350,7 +389,7 @@ int validClockType()
 // used when validating converted hour to UTC
 int validConvertedHour(int hours, int clockHourType)
 {
-	if (clockHourType == 12)
+	if (clockHourType == TWELVE_HOUR_CLOCK)
 	{
 		if (hours < 0) // check if hours is negative first
 		{
@@ -428,4 +467,13 @@ int validConvertedMinute(int minutes)
 		minutes = minutes % 60;
 	}
 	return minutes;
+}
+
+bool noIntegersZoneName(string str)
+{
+	if (none_of(str.begin(), str.end(), [](unsigned char c) {return isdigit(c); }))
+	{
+		return true;
+	}
+	return false;
 }
