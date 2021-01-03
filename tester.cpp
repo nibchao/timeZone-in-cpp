@@ -57,6 +57,7 @@ int main()
 	{
 		clockHourType = time.getClockType();
 		response = menu(clockHourType);
+
 		switch (response)
 		{
 		case 1: // store a time
@@ -115,22 +116,34 @@ int main()
 						break;
 					}
 
-					// maybe make a third method (maybe overload HourToUTC) and its purpose is to return the UTC meridiem which is then used as the meridiemDesired/meridiem ? not sure
-					// below example assumes 11:00 AM PST want to convert to 2:00 PM EST
-					hourUTC = time.HourToUTC(hours, zoneName); // 11 PST -> 7 UTC
-					hourUTC = validConvertedHour(hourUTC, time.getClockType()); // yes, hourUTC is a valid hour value
-					minuteUTC = time.MinuteToUTC(minutes, zoneName); // 00 PST -> 00 UTC
-					minuteUTC = validConvertedMinute(minuteUTC); // yes, minuteUTC is a valid minute value
+					hourUTC = time.HourToUTC(hours, zoneName); // 12
 
-					hourDesired = time.convertHourUTCtoZoneHour(hourUTC, zoneDesired); // 7 UTC -> 2 EST
+					hourDesired = time.convertHourUTCtoZoneHour(hourUTC, zoneDesired); // 7
 
 
-					meridiemDesired = validConvertedHour(hourDesired, meridiem); // returns 'meridiemDesired' which is equal to 'meridiem' which has a value of 'AM' because hourDesired (2) fails all of the if-statements 
+					// maybe need to split both HourToUTC and convertHourUTCtoZoneHour into separate functions - ones that add and ones that subtract?
+					// then based on which one is called, use the corresponding if-statement below? not sure though
+					// this idea kind of links back to my comments in timeMethods.cpp where a question should be asked about to figure out where the converted time zone will be to
+					// then use the appropriate conversion statements based on the general regions (Americas, Europe, Asia)
 
+					if (hourUTC > hourDesired) // this case only works when the time to be converted is > 12 such as 11 AM PST -> 5 AM AEST
+					//if (hours > hourDesired) // this case only works when the time to be converted is < 12 such as 4 AM PST -> 7 AM EST
+					{
+						meridiemDesired = "PM";
+					}
+					else
+					{
+						meridiemDesired = "AM";
+					}
 
-					hourDesired = validConvertedHour(hourDesired, time.getClockType()); // yes, hourDesired is a valid hour value
-					minuteDesired = time.convertMinuteUTCtoZoneMinute(minuteUTC, zoneDesired); // 00 UTC -> 00 EST
-					minuteDesired = validConvertedMinute(minuteDesired); // yes, minuteDesired is a valid minute value
+					hourDesired = validConvertedHour(hourDesired, time.getClockType());
+
+					hourUTC = validConvertedHour(hourUTC, time.getClockType());
+					minuteUTC = time.MinuteToUTC(minutes, zoneName);
+					minuteUTC = validConvertedMinute(minuteUTC);
+
+					minuteDesired = time.convertMinuteUTCtoZoneMinute(minuteUTC, zoneDesired);
+					minuteDesired = validConvertedMinute(minuteDesired);
 
 					if (minutes < 10 && minuteDesired < 10)
 					{
@@ -198,10 +211,6 @@ int main()
 		case 6: // exit
 			cout << "Exiting program.";
 			break;
-		case 99: // testing
-			hours = validHours(time.getClockType());
-			cout << hours << endl;
-			break;
 		case 10: // destructor option
 			if (confirmDelete() == true)
 			{
@@ -242,6 +251,7 @@ int menu(int clockHourType)
 	return response;
 }
 
+// need to add validation for when user inputs a value higher than 12 (if on 12-Hour Clock Type) or 24 (if on 24-Hour Clock Type)
 int validHours(int clockHourType)
 {
 	int hours = 0;
