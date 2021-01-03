@@ -24,6 +24,7 @@ timeMethods::~timeMethods()
 	head = nullptr;
 }
 
+// storeTime method - 12-Hour Clock Version
 void timeMethods::storeTime(int hours, int minutes, string meridiemAbbreviation, string zoneName)
 {
 	if (hours < 0)
@@ -68,6 +69,7 @@ void timeMethods::storeTime(int hours, int minutes, string meridiemAbbreviation,
 	}
 }
 
+// overloaded storeTime method - 24-Hour Clock Version
 void timeMethods::storeTime(int hours, int minutes, string zoneName)
 {
 	if (hours < 0)
@@ -119,6 +121,7 @@ void timeMethods::storeTime(int hours, int minutes, string zoneName)
 	}
 }
 
+// deleteTime method - 12-Hour Clock Version
 void timeMethods::deleteTime(int hours, int minutes, string meridiemAbbreviation, string zoneName)
 {
 	Node* currentNode = head;
@@ -162,6 +165,7 @@ void timeMethods::deleteTime(int hours, int minutes, string meridiemAbbreviation
 	}
 }
 
+// overloaded deleteTime method - 24-Hour Clock Version
 void timeMethods::deleteTime(int hours, int minutes, string zoneName)
 {
 	Node* currentNode = head;
@@ -262,6 +266,7 @@ void timeMethods::displayStoredTimes() const
 	cout << endl;
 }
 
+// searchTime method - 12-Hour Clock Version
 bool timeMethods::searchTime(int hours, int minutes, string meridiemAbbreviation, string zoneName)
 {
 	Node* currentNode = head;
@@ -285,6 +290,7 @@ bool timeMethods::searchTime(int hours, int minutes, string meridiemAbbreviation
 	return false;
 }
 
+// overloaded searchTime method - 24-Hour Clock Version
 bool timeMethods::searchTime(int hours, int minutes, string zoneName)
 {
 	Node* currentNode = head;
@@ -330,7 +336,7 @@ int timeMethods::HourToUTC(int hours, string zoneName)
 		return convertedHours;
 	}
 
-	if (zoneName == "NZDT" || zoneName == "FJST" || zoneName == "PHOT" || zoneName == "TKT" || zoneName == "TOT" || zoneName == "WST")
+	if (zoneName == "NZDT" || zoneName == "FJST" || zoneName == "PHOT" || zoneName == "TKT" || zoneName == "TOT")
 	{
 		convertedHours -= 13;
 		return convertedHours;
@@ -342,7 +348,7 @@ int timeMethods::HourToUTC(int hours, string zoneName)
 		return convertedHours;
 	}
 
-	if (zoneName == "AEDT" || zoneName == "BST" || zoneName == "KOST" || zoneName == "L" || zoneName == "LHDT" || zoneName == "MAGT" || zoneName == "NCT" || zoneName == "NFT" || zoneName == "PONT" || zoneName == "SAKT" || zoneName == "SBT" || zoneName == "SRET" || zoneName == "VLAST" || zoneName == "VUT")
+	if (zoneName == "AEDT" || zoneName == "KOST" || zoneName == "L" || zoneName == "LHDT" || zoneName == "MAGT" || zoneName == "NCT" || zoneName == "NFT" || zoneName == "PONT" || zoneName == "SAKT" || zoneName == "SBT" || zoneName == "SRET" || zoneName == "VLAST" || zoneName == "VUT")
 	{
 		convertedHours -= 11;
 		return convertedHours;
@@ -378,7 +384,7 @@ int timeMethods::HourToUTC(int hours, string zoneName)
 		return convertedHours;
 	}
 
-	if (zoneName == "CST" || zoneName == "AWST" || zoneName == "BNT" || zoneName == "CAST" || zoneName == "CHOT" || zoneName == "H" || zoneName == "HKT" || zoneName == "HOVST" || zoneName == "IRKT" || zoneName == "KRAST" || zoneName == "MYT" || zoneName == "PHT" || zoneName == "SGT" || zoneName == "ULAT" || zoneName == "WITA")
+	if (zoneName == "AWST" || zoneName == "BNT" || zoneName == "CAST" || zoneName == "CHOT" || zoneName == "H" || zoneName == "HKT" || zoneName == "HOVST" || zoneName == "IRKT" || zoneName == "KRAST" || zoneName == "MYT" || zoneName == "PHT" || zoneName == "SGT" || zoneName == "ULAT" || zoneName == "WITA")
 	{
 		convertedHours -= 8;
 		return convertedHours;
@@ -396,7 +402,7 @@ int timeMethods::HourToUTC(int hours, string zoneName)
 		return convertedHours;
 	}
 
-	if (zoneName == "BST" || zoneName == "ALMT" || zoneName == "BTT" || zoneName == "F" || zoneName == "IOT" || zoneName == "KGT" || zoneName == "OMST" || zoneName == "QYZT" || zoneName == "VOST" || zoneName == "YEKST")
+	if (zoneName == "ALMT" || zoneName == "BTT" || zoneName == "F" || zoneName == "IOT" || zoneName == "KGT" || zoneName == "OMST" || zoneName == "QYZT" || zoneName == "VOST" || zoneName == "YEKST")
 	{
 		convertedHours -= 6;
 		return convertedHours;
@@ -408,13 +414,7 @@ int timeMethods::HourToUTC(int hours, string zoneName)
 		return convertedHours;
 	}
 
-	if (zoneName == "IST")
-	{
-		convertedHours -= 5;
-		return convertedHours;
-	}
-
-	if (zoneName == "UZT" || zoneName == "AMST" || zoneName == "AQTT" || zoneName == "AZST" || zoneName == "E" || zoneName == "MAWT" || zoneName == "MVT" || zoneName == "ORAT" || zoneName == "PKT" || zoneName == "TFT" || zoneName == "TJT" || zoneName == "TMT" || zoneName == "YEKT")
+	if (zoneName == "UZT" || zoneName == "AQTT" || zoneName == "AZST" || zoneName == "E" || zoneName == "MAWT" || zoneName == "MVT" || zoneName == "ORAT" || zoneName == "PKT" || zoneName == "TFT" || zoneName == "TJT" || zoneName == "TMT" || zoneName == "YEKT")
 	{
 		convertedHours -= 5;
 		return convertedHours;
@@ -426,7 +426,7 @@ int timeMethods::HourToUTC(int hours, string zoneName)
 		return convertedHours;
 	}
 
-	if (zoneName == "GST" || zoneName == "ADT" || zoneName == "AMT" || zoneName == "AZT" || zoneName == "D" || zoneName == "GET" || zoneName == "KUYT" || zoneName == "MSD" || zoneName == "MUT" || zoneName == "RET" || zoneName == "SAMT" || zoneName == "SCT")
+	if (zoneName == "AZT" || zoneName == "D" || zoneName == "GET" || zoneName == "KUYT" || zoneName == "MSD" || zoneName == "MUT" || zoneName == "RET" || zoneName == "SAMT" || zoneName == "SCT")
 	{
 		convertedHours -= 4;
 		return convertedHours;
@@ -438,19 +438,19 @@ int timeMethods::HourToUTC(int hours, string zoneName)
 		return convertedHours;
 	}
 
-	if (zoneName == "MSK" || zoneName == "AST" || zoneName == "C" || zoneName == "EAT" || zoneName == "EEST" || zoneName == "FET" || zoneName == "IDT" || zoneName == "SYOT" || zoneName == "TRT")
+	if (zoneName == "MSK" || zoneName == "C" || zoneName == "EAT" || zoneName == "EEST" || zoneName == "FET" || zoneName == "IDT" || zoneName == "SYOT" || zoneName == "TRT")
 	{
 		convertedHours -= 3;
 		return convertedHours;
 	}
 
-	if (zoneName == "EET" || zoneName == "B" || zoneName == "CAT" || zoneName == "CEST" || zoneName == "IST" || zoneName == "SAST" || zoneName == "WAST")
+	if (zoneName == "EET" || zoneName == "B" || zoneName == "CAT" || zoneName == "CEST" || zoneName == "SAST" || zoneName == "WAST")
 	{
 		convertedHours -= 2;
 		return convertedHours;
 	}
 
-	if (zoneName == "CET" || zoneName == "A" || zoneName == "BST" || zoneName == "IST" || zoneName == "WAT" || zoneName == "WEST" || zoneName == "WST")
+	if (zoneName == "CET" || zoneName == "A" || zoneName == "WAT" || zoneName == "WEST")
 	{
 		convertedHours -= 1;
 		return convertedHours;
@@ -468,13 +468,13 @@ int timeMethods::HourToUTC(int hours, string zoneName)
 		return convertedHours;
 	}
 
-	if (zoneName == "GST" || zoneName == "BRST" || zoneName == "FNT" || zoneName == "O" || zoneName == "PMDT" || zoneName == "UYST" || zoneName == "WGST")
+	if (zoneName == "BRST" || zoneName == "FNT" || zoneName == "O" || zoneName == "PMDT" || zoneName == "UYST" || zoneName == "WGST")
 	{
 		convertedHours += 2;
 		return convertedHours;
 	}
 
-	if (zoneName == "ART" || zoneName == "ADT" || zoneName == "AMST" || zoneName == "BRT" || zoneName == "CLST" || zoneName == "FKST" || zoneName == "GFT" || zoneName == "P" || zoneName == "PMST" || zoneName == "PYST" || zoneName == "ROTT" || zoneName == "SRT" || zoneName == "UYT" || zoneName == "WARST" || zoneName == "WGT")
+	if (zoneName == "ART" || zoneName == "BRT" || zoneName == "CLST" || zoneName == "FKST" || zoneName == "GFT" || zoneName == "P" || zoneName == "PMST" || zoneName == "PYST" || zoneName == "ROTT" || zoneName == "SRT" || zoneName == "UYT" || zoneName == "WARST" || zoneName == "WGT")
 	{
 		convertedHours += 3;
 		return convertedHours;
@@ -486,19 +486,19 @@ int timeMethods::HourToUTC(int hours, string zoneName)
 		return convertedHours;
 	}
 
-	if (zoneName == "VET" || zoneName == "AMT" || zoneName == "AST" || zoneName == "BOT" || zoneName == "CDT" || zoneName == "CIDST" || zoneName == "CLT" || zoneName == "EDT" || zoneName == "FKT" || zoneName == "GYT" || zoneName == "PYT" || zoneName == "Q")
+	if (zoneName == "VET" || zoneName == "BOT" || zoneName == "CIDST" || zoneName == "CLT" || zoneName == "EDT" || zoneName == "FKT" || zoneName == "GYT" || zoneName == "PYT" || zoneName == "Q")
 	{
 		convertedHours += 4;
 		return convertedHours;
 	}
 
-	if (zoneName == "EST" || zoneName == "ACT" || zoneName == "CDT" || zoneName == "CIST" || zoneName == "COT" || zoneName == "CST" || zoneName == "EASST" || zoneName == "ECT" || zoneName == "PET" || zoneName == "R")
+	if (zoneName == "EST" || zoneName == "ACT" || zoneName == "CIST" || zoneName == "COT" || zoneName == "EASST" || zoneName == "ECT" || zoneName == "PET" || zoneName == "R")
 	{
 		convertedHours += 5;
 		return convertedHours;
 	}
 
-	if (zoneName == "CST" || zoneName == "EAST" || zoneName == "GALT" || zoneName == "MDT" || zoneName == "S")
+	if (zoneName == "EAST" || zoneName == "GALT" || zoneName == "MDT" || zoneName == "S")
 	{
 		convertedHours += 6;
 		return convertedHours;
@@ -547,6 +547,95 @@ int timeMethods::HourToUTC(int hours, string zoneName)
 	}
 
 	return convertedHours;
+}
+
+int timeMethods::HourToUTCDuplicateAbbreviation(int hours, string fullZoneName)
+{
+	int convertedHours = hours;
+
+	if (fullZoneName == "West Samoa Time")
+	{
+		convertedHours -= 13;
+		return convertedHours;
+	}
+
+	if (fullZoneName == "Bougainville Standard Time")
+	{
+		convertedHours -= 11;
+		return convertedHours;
+	}
+
+	if (fullZoneName == "China Standard Time")
+	{
+		convertedHours -= 8;
+		return convertedHours;
+	}
+
+	if (fullZoneName == "Bangladesh Standard Time")
+	{
+		convertedHours -= 6;
+		return convertedHours;
+	}
+
+	if (fullZoneName == "India Standard Time" || fullZoneName == "Armenia Summer Time")
+	{
+		convertedHours -= 5;
+		return convertedHours;
+	}
+
+	if (fullZoneName == "Gulf Standard Time" || fullZoneName == "Arabia Daylight Time" || fullZoneName == "Armenia Time")
+	{
+		convertedHours -= 4;
+		return convertedHours;
+	}
+
+	if (fullZoneName == "Arabia Standard Time")
+	{
+		convertedHours -= 3;
+		return convertedHours;
+	}
+
+	if (fullZoneName == "Israel Standard Time")
+	{
+		convertedHours -= 2;
+		return convertedHours;
+	}
+
+	if (fullZoneName == "British Summer Time" || fullZoneName == "Irish Standard Time" || fullZoneName == "Western Sahara Summer Time")
+	{
+		convertedHours -= 1;
+		return convertedHours;
+	}
+
+	if (fullZoneName == "South Georgia Time")
+	{
+		convertedHours += 2;
+		return convertedHours;
+	}
+
+	if (fullZoneName == "Atlantic Daylight Time" || fullZoneName == "Amazon Summer Time")
+	{
+		convertedHours += 3;
+		return convertedHours;
+	}
+
+	if (fullZoneName == "Amazon Time" || fullZoneName == "Atlantic Standard Time" || fullZoneName == "Cuba Daylight Time")
+	{
+		convertedHours += 4;
+		return convertedHours;
+	}
+
+	if (fullZoneName == "Central Daylight Time" || fullZoneName == "Cuba Standard Time")
+	{
+		convertedHours += 5;
+		return convertedHours;
+	}
+
+	if (fullZoneName == "Central Standard Time")
+	{
+		convertedHours += 6;
+		return convertedHours;
+	}
 }
 
 int timeMethods::MinuteToUTC(int minutes, string zoneName)
@@ -638,7 +727,7 @@ int timeMethods::convertHourUTCtoZoneHour(int hours, string desiredZone)
 		return convertedHours;
 	}
 
-	if (desiredZone == "NZDT" || desiredZone == "FJST" || desiredZone == "PHOT" || desiredZone == "TKT" || desiredZone == "TOT" || desiredZone == "WST")
+	if (desiredZone == "NZDT" || desiredZone == "FJST" || desiredZone == "PHOT" || desiredZone == "TKT" || desiredZone == "TOT")
 	{
 		convertedHours += 13;
 		return convertedHours;
@@ -650,7 +739,7 @@ int timeMethods::convertHourUTCtoZoneHour(int hours, string desiredZone)
 		return convertedHours;
 	}
 
-	if (desiredZone == "AEDT" || desiredZone == "BST" || desiredZone == "KOST" || desiredZone == "L" || desiredZone == "LHDT" || desiredZone == "MAGT" || desiredZone == "NCT" || desiredZone == "NFT" || desiredZone == "PONT" || desiredZone == "SAKT" || desiredZone == "SBT" || desiredZone == "SRET" || desiredZone == "VLAST" || desiredZone == "VUT")
+	if (desiredZone == "AEDT" || desiredZone == "KOST" || desiredZone == "L" || desiredZone == "LHDT" || desiredZone == "MAGT" || desiredZone == "NCT" || desiredZone == "NFT" || desiredZone == "PONT" || desiredZone == "SAKT" || desiredZone == "SBT" || desiredZone == "SRET" || desiredZone == "VLAST" || desiredZone == "VUT")
 	{
 		convertedHours += 11;
 		return convertedHours;
@@ -686,7 +775,7 @@ int timeMethods::convertHourUTCtoZoneHour(int hours, string desiredZone)
 		return convertedHours;
 	}
 
-	if (desiredZone == "CST" || desiredZone == "AWST" || desiredZone == "BNT" || desiredZone == "CAST" || desiredZone == "CHOT" || desiredZone == "H" || desiredZone == "HKT" || desiredZone == "HOVST" || desiredZone == "IRKT" || desiredZone == "KRAST" || desiredZone == "MYT" || desiredZone == "PHT" || desiredZone == "SGT" || desiredZone == "ULAT" || desiredZone == "WITA")
+	if (desiredZone == "AWST" || desiredZone == "BNT" || desiredZone == "CAST" || desiredZone == "CHOT" || desiredZone == "H" || desiredZone == "HKT" || desiredZone == "HOVST" || desiredZone == "IRKT" || desiredZone == "KRAST" || desiredZone == "MYT" || desiredZone == "PHT" || desiredZone == "SGT" || desiredZone == "ULAT" || desiredZone == "WITA")
 	{
 		convertedHours += 8;
 		return convertedHours;
@@ -704,7 +793,7 @@ int timeMethods::convertHourUTCtoZoneHour(int hours, string desiredZone)
 		return convertedHours;
 	}
 
-	if (desiredZone == "BST" || desiredZone == "ALMT" || desiredZone == "BTT" || desiredZone == "F" || desiredZone == "IOT" || desiredZone == "KGT" || desiredZone == "OMST" || desiredZone == "QYZT" || desiredZone == "VOST" || desiredZone == "YEKST")
+	if (desiredZone == "ALMT" || desiredZone == "BTT" || desiredZone == "F" || desiredZone == "IOT" || desiredZone == "KGT" || desiredZone == "OMST" || desiredZone == "QYZT" || desiredZone == "VOST" || desiredZone == "YEKST")
 	{
 		convertedHours += 6;
 		return convertedHours;
@@ -716,13 +805,7 @@ int timeMethods::convertHourUTCtoZoneHour(int hours, string desiredZone)
 		return convertedHours;
 	}
 
-	if (desiredZone == "IST")
-	{
-		convertedHours += 5;
-		return convertedHours;
-	}
-
-	if (desiredZone == "UZT" || desiredZone == "AMST" || desiredZone == "AQTT" || desiredZone == "AZST" || desiredZone == "E" || desiredZone == "MAWT" || desiredZone == "MVT" || desiredZone == "ORAT" || desiredZone == "PKT" || desiredZone == "TFT" || desiredZone == "TJT" || desiredZone == "TMT" || desiredZone == "YEKT")
+	if (desiredZone == "UZT" || desiredZone == "AQTT" || desiredZone == "AZST" || desiredZone == "E" || desiredZone == "MAWT" || desiredZone == "MVT" || desiredZone == "ORAT" || desiredZone == "PKT" || desiredZone == "TFT" || desiredZone == "TJT" || desiredZone == "TMT" || desiredZone == "YEKT")
 	{
 		convertedHours += 5;
 		return convertedHours;
@@ -734,7 +817,7 @@ int timeMethods::convertHourUTCtoZoneHour(int hours, string desiredZone)
 		return convertedHours;
 	}
 
-	if (desiredZone == "GST" || desiredZone == "ADT" || desiredZone == "AMT" || desiredZone == "AZT" || desiredZone == "D" || desiredZone == "GET" || desiredZone == "KUYT" || desiredZone == "MSD" || desiredZone == "MUT" || desiredZone == "RET" || desiredZone == "SAMT" || desiredZone == "SCT")
+	if (desiredZone == "AZT" || desiredZone == "D" || desiredZone == "GET" || desiredZone == "KUYT" || desiredZone == "MSD" || desiredZone == "MUT" || desiredZone == "RET" || desiredZone == "SAMT" || desiredZone == "SCT")
 	{
 		convertedHours += 4;
 		return convertedHours;
@@ -746,19 +829,19 @@ int timeMethods::convertHourUTCtoZoneHour(int hours, string desiredZone)
 		return convertedHours;
 	}
 
-	if (desiredZone == "MSK" || desiredZone == "AST" || desiredZone == "C" || desiredZone == "EAT" || desiredZone == "EEST" || desiredZone == "FET" || desiredZone == "IDT" || desiredZone == "SYOT" || desiredZone == "TRT")
+	if (desiredZone == "MSK" || desiredZone == "C" || desiredZone == "EAT" || desiredZone == "EEST" || desiredZone == "FET" || desiredZone == "IDT" || desiredZone == "SYOT" || desiredZone == "TRT")
 	{
 		convertedHours += 3;
 		return convertedHours;
 	}
 
-	if (desiredZone == "EET" || desiredZone == "B" || desiredZone == "CAT" || desiredZone == "CEST" || desiredZone == "IST" || desiredZone == "SAST" || desiredZone == "WAST")
+	if (desiredZone == "EET" || desiredZone == "B" || desiredZone == "CAT" || desiredZone == "CEST" || desiredZone == "SAST" || desiredZone == "WAST")
 	{
 		convertedHours += 2;
 		return convertedHours;
 	}
 
-	if (desiredZone == "CET" || desiredZone == "A" || desiredZone == "BST" || desiredZone == "IST" || desiredZone == "WAT" || desiredZone == "WEST" || desiredZone == "WST")
+	if (desiredZone == "CET" || desiredZone == "A" || desiredZone == "WAT" || desiredZone == "WEST")
 	{
 		convertedHours += 1;
 		return convertedHours;
@@ -776,13 +859,13 @@ int timeMethods::convertHourUTCtoZoneHour(int hours, string desiredZone)
 		return convertedHours;
 	}
 
-	if (desiredZone == "GST" || desiredZone == "BRST" || desiredZone == "FNT" || desiredZone == "O" || desiredZone == "PMDT" || desiredZone == "UYST" || desiredZone == "WGST")
+	if (desiredZone == "BRST" || desiredZone == "FNT" || desiredZone == "O" || desiredZone == "PMDT" || desiredZone == "UYST" || desiredZone == "WGST")
 	{
 		convertedHours -= 2;
 		return convertedHours;
 	}
 
-	if (desiredZone == "ART" || desiredZone == "ADT" || desiredZone == "AMST" || desiredZone == "BRT" || desiredZone == "CLST" || desiredZone == "FKST" || desiredZone == "GFT" || desiredZone == "P" || desiredZone == "PMST" || desiredZone == "PYST" || desiredZone == "ROTT" || desiredZone == "SRT" || desiredZone == "UYT" || desiredZone == "WARST" || desiredZone == "WGT")
+	if (desiredZone == "ART" || desiredZone == "BRT" || desiredZone == "CLST" || desiredZone == "FKST" || desiredZone == "GFT" || desiredZone == "P" || desiredZone == "PMST" || desiredZone == "PYST" || desiredZone == "ROTT" || desiredZone == "SRT" || desiredZone == "UYT" || desiredZone == "WARST" || desiredZone == "WGT")
 	{
 		convertedHours -= 3;
 		return convertedHours;
@@ -794,19 +877,19 @@ int timeMethods::convertHourUTCtoZoneHour(int hours, string desiredZone)
 		return convertedHours;
 	}
 
-	if (desiredZone == "VET" || desiredZone == "AMT" || desiredZone == "AST" || desiredZone == "BOT" || desiredZone == "CDT" || desiredZone == "CIDST" || desiredZone == "CLT" || desiredZone == "EDT" || desiredZone == "FKT" || desiredZone == "GYT" || desiredZone == "PYT" || desiredZone == "Q")
+	if (desiredZone == "VET" || desiredZone == "BOT" || desiredZone == "CIDST" || desiredZone == "CLT" || desiredZone == "EDT" || desiredZone == "FKT" || desiredZone == "GYT" || desiredZone == "PYT" || desiredZone == "Q")
 	{
 		convertedHours -= 4;
 		return convertedHours;
 	}
 
-	if (desiredZone == "EST" || desiredZone == "ACT" || desiredZone == "CDT" || desiredZone == "CIST" || desiredZone == "COT" || desiredZone == "CST" || desiredZone == "EASST" || desiredZone == "ECT" || desiredZone == "PET" || desiredZone == "R")
+	if (desiredZone == "EST" || desiredZone == "ACT" || desiredZone == "CIST" || desiredZone == "COT" || desiredZone == "CST" || desiredZone == "EASST" || desiredZone == "ECT" || desiredZone == "PET" || desiredZone == "R")
 	{
 		convertedHours -= 5;
 		return convertedHours;
 	}
 
-	if (desiredZone == "CST" || desiredZone == "EAST" || desiredZone == "GALT" || desiredZone == "MDT" || desiredZone == "S")
+	if (desiredZone == "EAST" || desiredZone == "GALT" || desiredZone == "MDT" || desiredZone == "S")
 	{
 		convertedHours -= 6;
 		return convertedHours;
@@ -855,6 +938,95 @@ int timeMethods::convertHourUTCtoZoneHour(int hours, string desiredZone)
 	}
 
 	return convertedHours;
+}
+
+int timeMethods::convertHourUTCtoZoneHourDuplicateAbbreviation(int hours, string desiredZone)
+{
+	int convertedHours = hours;
+
+	if (desiredZone == "West Samoa Time")
+	{
+		convertedHours += 13;
+		return convertedHours;
+	}
+
+	if (desiredZone == "Bougainville Standard Time")
+	{
+		convertedHours += 11;
+		return convertedHours;
+	}
+
+	if (desiredZone == "China Standard Time")
+	{
+		convertedHours += 8;
+		return convertedHours;
+	}
+
+	if (desiredZone == "Bangladesh Standard Time")
+	{
+		convertedHours += 6;
+		return convertedHours;
+	}
+
+	if (desiredZone == "India Standard Time" || desiredZone == "Armenia Summer Time")
+	{
+		convertedHours += 5;
+		return convertedHours;
+	}
+
+	if (desiredZone == "Gulf Standard Time" || desiredZone == "Arabia Daylight Time" || desiredZone == "Armenia Time")
+	{
+		convertedHours += 4;
+		return convertedHours;
+	}
+
+	if (desiredZone == "Arabia Standard Time")
+	{
+		convertedHours += 3;
+		return convertedHours;
+	}
+
+	if (desiredZone == "Israel Standard Time")
+	{
+		convertedHours += 2;
+		return convertedHours;
+	}
+
+	if (desiredZone == "British Summer Time" || desiredZone == "Irish Standard Time" || desiredZone == "Western Sahara Summer Time")
+	{
+		convertedHours += 1;
+		return convertedHours;
+	}
+
+	if (desiredZone == "South Georgia Time")
+	{
+		convertedHours -= 2;
+		return convertedHours;
+	}
+
+	if (desiredZone == "Atlantic Daylight Time" || desiredZone == "Amazon Summer Time")
+	{
+		convertedHours -= 3;
+		return convertedHours;
+	}
+
+	if (desiredZone == "Amazon Time" || desiredZone == "Atlantic Standard Time" || desiredZone == "Cuba Daylight Time")
+	{
+		convertedHours -= 4;
+		return convertedHours;
+	}
+
+	if (desiredZone == "Central Daylight Time" || desiredZone == "Cuba Standard Time")
+	{
+		convertedHours -= 5;
+		return convertedHours;
+	}
+
+	if (desiredZone == "Central Standard Time")
+	{
+		convertedHours -= 6;
+		return convertedHours;
+	}
 }
 
 int timeMethods::convertMinuteUTCtoZoneMinute(int minutes, string desiredZone)

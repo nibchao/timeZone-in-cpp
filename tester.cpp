@@ -48,6 +48,9 @@ int main()
 	string zoneDesired = "";
 	string meridiemDesired = "";
 
+	string tempZone = "";
+	int zoneDesiredLength = 0;
+
 	int clockHourType = 0;
 	//
 
@@ -108,23 +111,88 @@ int main()
 
 				if (time.searchTime(hours, minutes, meridiem, zoneName) == true)
 				{
-					cout << "Input the time zone abbrevation you would like to convert the time to: " << endl;
+					cout << "Input the time zone abbreviation you would like to convert the time to: " << endl;
 					zoneDesired = validZone();
+					tempZone = zoneDesired;
 					if (zoneDesired == zoneName)
 					{
 						cout << "Error: Desired time zone is the same as the stored time." << endl;
 						break;
 					}
 
-					hourUTC = time.HourToUTC(hours, zoneName); // 12
+					// need to figure out how to move this large if-statement into separate function
+					if (zoneDesired == "BST" || zoneDesired == "CST" || zoneDesired == "IST" || zoneDesired == "WST" || zoneDesired == "AMST" || zoneDesired == "GST" || zoneDesired == "ADT" || zoneDesired == "AMT" || zoneDesired == "AST" || zoneDesired == "CDT")
+					{
+						cout << endl << "Multiple time zones found with " << tempZone << " as time zone abbreviation." << endl;
+						cout << endl << "Enter the full time zone name for " << tempZone << ": ";
+						getline(cin, zoneDesired);
+						transform(zoneDesired.begin(), zoneDesired.end(), zoneDesired.begin(), ::tolower);
+						zoneDesiredLength = zoneDesired.length();
+						for (int cnt = 0; cnt < zoneDesiredLength; cnt++)
+						{
+							if (cnt == 0)
+							{
+								zoneDesired[cnt] = toupper(zoneDesired[cnt]);
+							}
+							else if (zoneDesired[cnt - 1] == ' ')
+							{
+								zoneDesired[cnt] = toupper(zoneDesired[cnt]);
+							}
+						}
 
-					hourDesired = time.convertHourUTCtoZoneHour(hourUTC, zoneDesired); // 7
+						while (zoneDesired == "" || zoneDesired.find_first_not_of(' ') || noIntegersZoneName(zoneDesired) == false 
+							|| (zoneDesired != "West Samoa Time" 
+							&& zoneDesired != "Bougainville Standard Time" 
+							&& zoneDesired != "China Standard Time" 
+							&& zoneDesired != "Bangladesh Standard Time" 
+							&& zoneDesired != "India Standard Time" 
+							&& zoneDesired != "Armenia Summer Time"
+							&& zoneDesired != "Gulf Standard Time"
+							&& zoneDesired != "Arabia Daylight Time"
+							&& zoneDesired != "Armenia Time"
+							&& zoneDesired != "Arabia Standard Time"
+							&& zoneDesired != "Israel Standard Time"
+							&& zoneDesired != "British Summer Time"
+							&& zoneDesired != "Irish Standard Time"
+							&& zoneDesired != "Western Sahara Summer Time"
+							&& zoneDesired != "South Georgia Time"
+							&& zoneDesired != "Atlantic Daylight Time"
+							&& zoneDesired != "Amazon Summer Time"
+							&& zoneDesired != "Amazon Time"
+							&& zoneDesired != "Atlantic Standard Time"
+							&& zoneDesired != "Cuba Daylight Time"
+							&& zoneDesired != "Central Daylight Time"
+							&& zoneDesired != "Cuba Standard Time"
+							&& zoneDesired != "Central Standard Time"))
+						{
+							cout << endl << "Error: Time zone name does not exist, blank characters were found, or integers were found." << endl;
+							cout << endl << "Enter the full time zone name for " << tempZone << ": ";
+							getline(cin, zoneDesired);
+							transform(zoneDesired.begin(), zoneDesired.end(), zoneDesired.begin(), ::tolower);
+							zoneDesiredLength = zoneDesired.length();
+							for (int cnt = 0; cnt < zoneDesiredLength; cnt++)
+							{
+								if (cnt == 0)
+								{
+									zoneDesired[cnt] = toupper(zoneDesired[cnt]);
+								}
+								else if (zoneDesired[cnt - 1] == ' ')
+								{
+									zoneDesired[cnt] = toupper(zoneDesired[cnt]);
+								}
+							}
+						}
+						// reminder to use duplicate versions of functions // cout << time.HourToUTCDuplicateAbbreviation(hours, zoneDesired);
+						break; // need to make a copy of code below except use the 'DuplicateAbbreviation' version of the functions
+					}
 
+					hourUTC = time.HourToUTC(hours, zoneName);
 
-					// maybe need to split both HourToUTC and convertHourUTCtoZoneHour into separate functions - ones that add and ones that subtract?
-					// then based on which one is called, use the corresponding if-statement below? not sure though
+					hourDesired = time.convertHourUTCtoZoneHour(hourUTC, zoneDesired);
+
+					// maybe need to split HourToUTC into two functions and convertHourUTCtoZoneHour into two functions - ones that subtract to get to UTC (ahead of UTC) and ones that add to get to UTC (behind UTC)
+					// then based on which version of the functions are called, use a corresponding if-statement below using some arbitrary value to differ between the two types of if-statements
 					// this idea kind of links back to my comments in timeMethods.cpp where a question should be asked about to figure out where the converted time zone will be to
-					// then use the appropriate conversion statements based on the general regions (Americas, Europe, Asia)
 
 					if (hourUTC > hourDesired) // this case only works when the time to be converted is > 12 such as 11 AM PST -> 5 AM AEST
 					//if (hours > hourDesired) // this case only works when the time to be converted is < 12 such as 4 AM PST -> 7 AM EST

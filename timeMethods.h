@@ -47,9 +47,11 @@ public:
 	bool searchTime(int, int, string);
 
 	int HourToUTC(int, string);
+	int HourToUTCDuplicateAbbreviation(int, string);
 	int MinuteToUTC(int, string);
 
 	int convertHourUTCtoZoneHour(int, string);
+	int convertHourUTCtoZoneHourDuplicateAbbreviation(int, string);
 	int convertMinuteUTCtoZoneMinute(int, string);
 
 	int setClockTypeTo12();
