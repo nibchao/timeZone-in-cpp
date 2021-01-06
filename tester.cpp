@@ -20,17 +20,19 @@ const int MAX_MINUTE_VALUE = 60;
 const int MERIDIEM_ABBREVIATION_LENGTH = 2;
 
 int menu(int);
+
 int validHours(int);
 int validMinutes();
 string validZone();
+
 bool confirmDelete();
+
 string validMeridiem();
 int validClockType(bool);
 
 bool noIntegersZoneName(string);
 
 int validConvertedHour(int, int);
-string validConvertedHour(int, string);
 int validConvertedMinute(int);
 string validDuplicateTimeZone(string, string);
 
@@ -120,6 +122,9 @@ int main()
 			case 3: // convert a time to another time zone
 				if (time.getClockType() == TWELVE_HOUR_CLOCK)
 				{
+					// test 11 AM PST -> 5:00 AM AEST - case for where desired time is nearly a day ahead
+					// test 11 AM PST -> 2 PM EST - case for where desired time has the opposite meridiem
+					// test 4 AM PST -> 7 AM EST - case for where desired time has same meridiem
 					cout << "Input the hours, minutes, meridiem (AM/PM), and time zone abbreviation of the time to convert." << endl << endl;
 					hours = validHours(time.getClockType());
 					cout << endl;
@@ -171,8 +176,13 @@ int main()
 						{
 							hourUTC = time.HourToUTC(hours, zoneName);
 
+							//meridiemDesired = "PM"; need to figure out how to obtain correct meridiem post conversion
+
 							hourDesired = time.convertHourUTCtoZoneHour(hourUTC, zoneDesired);
 							hourDesired = validConvertedHour(hourDesired, time.getClockType());
+
+							// possible idea is to treat AM as 0-11 (12:00 AM - 11:59 AM) and PM as 12-23 (12:00 PM - 11:59 PM)?
+							// would have to modify the validConvertedX functions and remove the % 12/% 24 or % 60 parts
 
 							hourUTC = validConvertedHour(hourUTC, time.getClockType());
 							minuteUTC = time.MinuteToUTC(minutes, zoneName);
@@ -432,7 +442,6 @@ int validClockType(bool empty)
 	return clockHourType;
 }
 
-// used when validating converted hour to UTC
 int validConvertedHour(int hours, int clockHourType)
 {
 	if (clockHourType == TWELVE_HOUR_CLOCK)
@@ -474,30 +483,6 @@ int validConvertedHour(int hours, int clockHourType)
 		}
 	}
 	return hours;
-}
-
-// used when validating converted hour to desired time zone
-string validConvertedHour(int hours, string meridiemDesired) // overloaded function of validConvertedHour
-{
-	if (hours < 0) // check if hours is negative first
-	{
-		hours = hours * -1;
-	}
-	if (hours == 0) // check if hours is 0
-	{
-		hours = 12;
-	}
-	if (hours > 12) // check if hours is greater than 12
-	{
-		hours = hours % 12;
-		meridiemDesired = "PM";
-	}
-	if (hours == 0) // check if hours is 0 again
-	{
-		hours = 12;
-		meridiemDesired = "AM";
-	}
-	return meridiemDesired;
 }
 
 int validConvertedMinute(int minutes)
