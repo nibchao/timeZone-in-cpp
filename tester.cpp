@@ -36,6 +36,8 @@ bool noIntegersInZoneName(string);
 int validConvertedHour(int, int);
 int validConvertedMinute(int);
 string validDuplicateTimeZone(string, string);
+
+void formatTwentyFourHourClockOutput(int, int, string, int, int, string);
 //
 
 int main()
@@ -117,11 +119,11 @@ int main()
 				}
 				break;
 			case 3: // convert a time to another time zone
-				if (timeMethods.getClockType() == TWELVE_HOUR_CLOCK)
+				if (timeMethods.getClockType() == TWELVE_HOUR_CLOCK) // 12-Hour Clock Case
 				{
 					// test 11 AM PST -> 5:00 AM AEST - case for where desired time is nearly a day ahead
-					// test 11 AM PST -> 2 PM EST - case for where desired time has the opposite meridiemInput
-					// test 4 AM PST -> 7 AM EST - case for where desired time has same meridiemInput
+					// test 11 AM PST -> 2 PM EST - case for where desired time has the opposite meridiem
+					// test 4 AM PST -> 7 AM EST - case for where desired time has same meridiem
 					cout << "Input the hours, minutes, meridiem (AM/PM), and time zone abbreviation of the time to convert." << endl << endl;
 					hourInput = validHourInput(timeMethods.getClockType());
 					minuteInput = validMinuteInput();
@@ -136,11 +138,11 @@ int main()
 
 						if (zoneDesired == zoneInput)
 						{
-							cout << "Error: Time zone to convert to is the same time zone as the stored time." << endl;
+							cout << "Error: Desired time zone is the same time zone as the stored time! Returning to menu." << endl;
 							break;
 						}
 
-						if (zoneDesired == "BST" || zoneDesired == "CST" || zoneDesired == "IST" || zoneDesired == "WST" || zoneDesired == "AMST" || zoneDesired == "GST" || zoneDesired == "ADT" || zoneDesired == "AMT" || zoneDesired == "AST" || zoneDesired == "CDT")
+						if (zoneDesired == "BST" || zoneDesired == "CST" || zoneDesired == "IST" || zoneDesired == "WST" || zoneDesired == "AMST" || zoneDesired == "GST" || zoneDesired == "ADT" || zoneDesired == "AMT" || zoneDesired == "AST" || zoneDesired == "CDT") // Duplicate Zone Abbreviation Case
 						{
 							zoneDesired = validDuplicateTimeZone(zoneDesired, tempZoneInput);
 
@@ -165,11 +167,11 @@ int main()
 								cout << hourInput << ":" << minuteInput << " " << meridiemInput << " " << zoneInput << " is " << hourDesired << ":" << minuteDesired << " " << meridiemDesired << " " << zoneDesired << endl << endl;
 							}
 						}
-						else
+						else // Every Other Time Zone
 						{
 							hourUTC = timeMethods.HourToUTC(hourInput, zoneInput);
 
-							//meridiemDesired = "PM"; need to figure out how to obtain correct meridiemInput post conversion
+							//meridiemDesired = "PM"; need to figure out how to obtain correct meridiem post conversion
 
 							hourDesired = timeMethods.convertHourUTCtoZoneHour(hourUTC, zoneDesired);
 							hourDesired = validConvertedHour(hourDesired, timeMethods.getClockType());
@@ -195,20 +197,42 @@ int main()
 						}
 					}
 				}
-				else
+				else // 24-Hour Clock Case
 				{
-					cout << "Enter the hours, minutes, and time zone of the time you would like to convert." << endl;
+					cout << "Input the hours, minutes, and time zone abbreviation of the time to convert." << endl << endl;
 					hourInput = validHourInput(timeMethods.getClockType());
 					minuteInput = validMinuteInput();
 					zoneInput = validZoneInput();
 
 					if (timeMethods.searchTime(hourInput, minuteInput, zoneInput) == true)
 					{
-						cout << "Input the time zone abbrevation you would like to convert the time to: " << endl;
+						cout << "Input the time zone abbreviation to convert the time to:" << endl << endl;
 						zoneDesired = validZoneInput();
+						tempZoneInput = zoneDesired;
+
 						if (zoneDesired == zoneInput)
 						{
-							cout << "Error: Desired time zone is the same as the stored time." << endl;
+							cout << "Error: Desired time zone is the same time zone as the stored time! Returning to menu." << endl;
+							break;
+						}
+
+						if (zoneDesired == "BST" || zoneDesired == "CST" || zoneDesired == "IST" || zoneDesired == "WST" || zoneDesired == "AMST" || zoneDesired == "GST" || zoneDesired == "ADT" || zoneDesired == "AMT" || zoneDesired == "AST" || zoneDesired == "CDT") // Duplicate Zone Abbreviation Case
+						{
+							zoneDesired = validDuplicateTimeZone(zoneDesired, tempZoneInput);
+
+							hourUTC = timeMethods.HourToUTCDuplicateAbbreviation(hourInput, zoneInput);
+
+							hourDesired = timeMethods.convertHourUTCtoZoneHourDuplicateAbbreviation(hourUTC, zoneDesired);
+							hourDesired = validConvertedHour(hourDesired, timeMethods.getClockType());
+
+							hourUTC = validConvertedHour(hourUTC, timeMethods.getClockType());
+							minuteUTC = timeMethods.MinuteToUTC(minuteInput, zoneInput);
+							minuteUTC = validConvertedMinute(minuteUTC);
+
+							minuteDesired = timeMethods.convertMinuteUTCtoZoneMinute(minuteUTC, zoneDesired);
+							minuteDesired = validConvertedMinute(minuteDesired);
+
+							formatTwentyFourHourClockOutput(hourInput, minuteInput, zoneInput, hourDesired, minuteDesired, zoneDesired);
 							break;
 						}
 
@@ -222,14 +246,8 @@ int main()
 						minuteDesired = timeMethods.convertMinuteUTCtoZoneMinute(minuteUTC, zoneDesired);
 						minuteDesired = validConvertedMinute(minuteDesired);
 
-						if (minuteInput < 10 && minuteDesired < 10)
-						{
-							cout << hourInput << ":0" << minuteInput << " " << zoneInput << " is " << hourDesired << ":0" << minuteDesired << " " << zoneDesired << endl << endl;
-						}
-						else
-						{
-							cout << hourInput << ":" << minuteInput << " " << zoneInput << " is " << hourDesired << ":" << minuteDesired << " " << zoneDesired << endl << endl;
-						}
+						formatTwentyFourHourClockOutput(hourInput, minuteInput, zoneInput, hourDesired, minuteDesired, zoneDesired);
+						break;
 					}
 				}
 				break;
@@ -400,7 +418,7 @@ int validClockType(bool noStoredTimes)
 
 	if (noStoredTimes == true)
 	{
-		cout << "Enter '12' to select the 12-Hour clock type or enter '24' to select the 24-Hour clock type." << endl;
+		cout << "Enter '12' to select the 12-Hour clock type or enter '24' to select the 24-Hour clock type: ";
 		cin >> clockType;
 		cin.clear();
 		cin.ignore(10000, '\n');
@@ -408,7 +426,7 @@ int validClockType(bool noStoredTimes)
 		while (clockType != TWELVE_HOUR_CLOCK && clockType != TWENTY_FOUR_HOUR_CLOCK)
 		{
 			cout << endl << "Error: Input was not an accepted input (12 or 24)." << endl;
-			cout << "Enter '12' to select the 12-Hour clock type or enter '24' to select the 24-Hour clock type." << endl;
+			cout << "Enter '12' to select the 12-Hour clock type or enter '24' to select the 24-Hour clock type: ";
 			cin >> clockType;
 			cin.clear();
 			cin.ignore(10000, '\n');
@@ -543,4 +561,72 @@ string validDuplicateTimeZone(string zoneDesired, string tempZone)
 	}
 
 	return zoneDesired;
+}
+
+void formatTwentyFourHourClockOutput(int hourInput, int minuteInput, string zoneInput, int hourDesired, int minuteDesired, string zoneDesired)
+{
+	if (hourInput < 10 && minuteInput < 10 && hourDesired < 10 && minuteDesired < 10)
+	{
+		cout << "0" << hourInput << ":0" << minuteInput << " " << zoneInput << " is 0" << hourDesired << ":0" << minuteDesired << " " << zoneDesired << endl << endl;
+	}
+	else if (hourInput > 10 && minuteInput < 10 && hourDesired < 10 && minuteDesired < 10)
+	{
+		cout << hourInput << ":0" << minuteInput << " " << zoneInput << " is 0" << hourDesired << ":0" << minuteDesired << " " << zoneDesired << endl << endl;
+	}
+	else if (hourInput > 10 && minuteInput > 10 && hourDesired < 10 && minuteDesired < 10)
+	{
+		cout << hourInput << ":" << minuteInput << " " << zoneInput << " is 0" << hourDesired << ":0" << minuteDesired << " " << zoneDesired << endl << endl;
+	}
+	else if (hourInput > 10 && minuteInput > 10 && hourDesired > 10 && minuteDesired < 10)
+	{
+		cout << hourInput << ":" << minuteInput << " " << zoneInput << " is " << hourDesired << ":0" << minuteDesired << " " << zoneDesired << endl << endl;
+	}
+	else if (hourInput > 10 && minuteInput > 10 && hourDesired > 10 && minuteDesired > 10)
+	{
+		cout << hourInput << ":" << minuteInput << " " << zoneInput << " is " << hourDesired << ":" << minuteDesired << " " << zoneDesired << endl << endl;
+	}
+	else if (hourInput > 10 && minuteInput < 10 && hourDesired > 10 && minuteDesired < 10)
+	{
+		cout << hourInput << ":0" << minuteInput << " " << zoneInput << " is " << hourDesired << ":0" << minuteDesired << " " << zoneDesired << endl << endl;
+	}
+	else if (hourInput > 10 && minuteInput < 10 && hourDesired > 10 && minuteDesired > 10)
+	{
+		cout << hourInput << ":0" << minuteInput << " " << zoneInput << " is 0" << hourDesired << ":" << minuteDesired << " " << zoneDesired << endl << endl;
+	}
+	else if (hourInput > 10 && minuteInput > 10 && hourDesired < 10 && minuteDesired > 10)
+	{
+		cout << hourInput << ":" << minuteInput << " " << zoneInput << " is 0" << hourDesired << ":" << minuteDesired << " " << zoneDesired << endl << endl;
+	}
+	else if (hourInput < 10 && minuteInput < 10 && hourDesired < 10 && minuteDesired > 10)
+	{
+		cout << "0" << hourInput << ":0" << minuteInput << " " << zoneInput << " is 0" << hourDesired << ":" << minuteDesired << " " << zoneDesired << endl << endl;
+	}
+	else if (hourInput < 10 && minuteInput < 10 && hourDesired > 10 && minuteDesired > 10)
+	{
+		cout << "0" << hourInput << ":0" << minuteInput << " " << zoneInput << " is " << hourDesired << ":" << minuteDesired << " " << zoneDesired << endl << endl;
+	}
+	else if (hourInput < 10 && minuteInput > 10 && hourDesired > 10 && minuteDesired > 10)
+	{
+		cout << "0" << hourInput << ":" << minuteInput << " " << zoneInput << " is " << hourDesired << ":" << minuteDesired << " " << zoneDesired << endl << endl;
+	}
+	else if (hourInput < 10 && minuteInput > 10 && hourDesired < 10 && minuteDesired > 10)
+	{
+		cout << "0" << hourInput << ":" << minuteInput << " " << zoneInput << " is 0" << hourDesired << ":" << minuteDesired << " " << zoneDesired << endl << endl;
+	}
+	else if (hourInput < 10 && minuteInput < 10 && hourDesired > 10 && minuteDesired > 10)
+	{
+		cout << "0" << hourInput << ":0" << minuteInput << " " << zoneInput << " is " << hourDesired << ":" << minuteDesired << " " << zoneDesired << endl << endl;
+	}
+	else if (hourInput > 10 && minuteInput < 10 && hourDesired < 10 && minuteDesired > 10)
+	{
+		cout << hourInput << ":0" << minuteInput << " " << zoneInput << " is 0" << hourDesired << ":" << minuteDesired << " " << zoneDesired << endl << endl;
+	}
+	else if (hourInput < 10 && minuteInput < 10 && hourDesired > 10 && minuteDesired < 10)
+	{
+		cout << "0" << hourInput << ":0" << minuteInput << " " << zoneInput << " is " << hourDesired << ":0" << minuteDesired << " " << zoneDesired << endl << endl;
+	}
+	else if (hourInput < 10 && minuteInput > 10 && hourDesired < 10 && minuteDesired < 10)
+	{
+		cout << "0" << hourInput << ":" << minuteInput << " " << zoneInput << " is 0" << hourDesired << ":0" << minuteDesired << " " << zoneDesired << endl << endl;
+	}
 }
