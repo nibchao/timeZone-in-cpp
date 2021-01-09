@@ -66,6 +66,7 @@ int main()
 	int tempHourUTC = 0;
 	int tempHourDesired = 0;
 	int tempHourDesiredUTC = 0;
+	int test = 0;
 
 	timeMethods timeMethods;
 
@@ -126,7 +127,7 @@ int main()
 				if (timeMethods.getClockType() == TWELVE_HOUR_CLOCK) // 12-Hour Clock Case
 				{
 					// test 11 AM PST -> 5:00 AM AEST - case for where desired time is nearly a day ahead
-					// test 11 AM PST -> 2 PM EST - case for where desired time has the opposite meridiem @@@@@@@@@@@@@@@@@@@ this case fails
+					// test 11 AM PST -> 2 PM EST - case for where desired time has the opposite meridiem
 					// test 4 AM PST -> 7 AM EST - case for where desired time has same meridiem
 					cout << "Input the hours, minutes, meridiem (AM/PM), and time zone abbreviation of the time to convert." << endl << endl;
 					hourInput = validHourInput(timeMethods.getClockType());
@@ -146,18 +147,30 @@ int main()
 							break;
 						}
 
-						if (zoneDesired == "BST" || zoneDesired == "CST" || zoneDesired == "IST" || zoneDesired == "WST" || zoneDesired == "AMST" || zoneDesired == "GST" || zoneDesired == "ADT" || zoneDesired == "AMT" || zoneDesired == "AST" || zoneDesired == "CDT") // Duplicate Zone Abbreviation Case - need to add meridiem fix
+						if (zoneDesired == "BST" || zoneDesired == "CST" || zoneDesired == "IST" || zoneDesired == "WST" || zoneDesired == "AMST" || zoneDesired == "GST" || zoneDesired == "ADT" || zoneDesired == "AMT" || zoneDesired == "AST" || zoneDesired == "CDT") // Duplicate Zone Abbreviation Case
 						{
 							zoneDesired = validDuplicateTimeZone(zoneDesired, tempZoneInput);
 
 							hourUTC = timeMethods.HourToUTCDuplicateAbbreviation(hourInput, zoneInput);
-
-							hourDesired = timeMethods.convertHourUTCtoZoneHourDuplicateAbbreviation(hourUTC, zoneDesired);
-							hourDesired = validConvertedHour(hourDesired, timeMethods.getClockType());
-
+							tempHourUTC = hourUTC;
 							hourUTC = validConvertedHour(hourUTC, timeMethods.getClockType());
+
 							minuteUTC = timeMethods.MinuteToUTC(minuteInput, zoneInput);
 							minuteUTC = validConvertedMinute(minuteUTC);
+
+							hourDesired = timeMethods.convertHourUTCtoZoneHour(tempHourUTC, zoneDesired);
+							tempHourDesired = hourDesired;
+
+							if ((tempHourDesired % 24) > 12)
+							{
+								meridiemDesired = "PM";
+							}
+							else
+							{
+								meridiemDesired = "AM";
+							}
+
+							hourDesired = validConvertedHour(hourDesired, timeMethods.getClockType());
 
 							minuteDesired = timeMethods.convertMinuteUTCtoZoneMinute(minuteUTC, zoneDesired);
 							minuteDesired = validConvertedMinute(minuteDesired);
@@ -171,45 +184,29 @@ int main()
 								cout << hourInput << ":" << minuteInput << " " << meridiemInput << " " << zoneInput << " is " << hourDesired << ":" << minuteDesired << " " << meridiemDesired << " " << zoneDesired << endl << endl;
 							}
 						}
-						else // Every Other Time Zone - need to make meridiem fix here
+						else // Every Other Time Zone
 						{
-							// possible idea is to treat AM as 0-11 (12:00 AM - 11:59 AM) and PM as 12-23 (12:00 PM - 11:59 PM)?
-							// would have to modify the validConvertedX functions and remove the % 12/% 24 or % 60 parts
-
-							// original ordering of code
-							// convert hour to UTC, validate the UTC hours; convert minute to UTC, validate the UTC minutes
-							// use the validated UTC hours to convert to the time zone; validate the new time zone hours; use the validated UTC minutes to convert to the zome zone; validate the new time zone minutes
-							// print and format the newly converted time
 							hourUTC = timeMethods.HourToUTC(hourInput, zoneInput);
+							tempHourUTC = hourUTC;
+							hourUTC = validConvertedHour(hourUTC, timeMethods.getClockType());
 
-							tempHourUTC = hourUTC; // assuming 11 AM PST, tempHourUTC = 19
-
-							//hourDesired = timeMethods.convertHourUTCtoZoneHour(hourUTC, zoneDesired);
-							//tempHourDesired = hourDesired;
-
-							hourUTC = validConvertedHour(hourUTC, timeMethods.getClockType()); // hourUTC = 7 now
 							minuteUTC = timeMethods.MinuteToUTC(minuteInput, zoneInput);
 							minuteUTC = validConvertedMinute(minuteUTC);
 
-							hourDesired = timeMethods.convertHourUTCtoZoneHour(tempHourUTC, zoneDesired); // hourDesired = 14
-							
-							// need to figure out how to get hourDesired into UTC using tempHourUTC (?) somehow; like going from tempHourUTC = 19 to tempHourDesired = 22 somehow
-							// then do comparisons in the below if-else statement to get the correct meridiem
-
-							tempHourDesiredUTC = timeMethods.HourToUTC(hourDesired, zoneDesired); // tempHourDesiredUTC = 19
-
+							hourDesired = timeMethods.convertHourUTCtoZoneHour(tempHourUTC, zoneDesired);
 							tempHourDesired = hourDesired;
 
-							if ((tempHourUTC % 24) > (tempHourDesired % 24))
-							{
-								meridiemDesired = "AM";
-							}
-							else
+							if ((tempHourDesired % 24) > 12)
 							{
 								meridiemDesired = "PM";
 							}
+							else
+							{
+								meridiemDesired = "AM";
+							}
 
 							hourDesired = validConvertedHour(hourDesired, timeMethods.getClockType());
+
 							minuteDesired = timeMethods.convertMinuteUTCtoZoneMinute(minuteUTC, zoneDesired);
 							minuteDesired = validConvertedMinute(minuteDesired);
 
