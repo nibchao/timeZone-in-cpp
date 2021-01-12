@@ -38,6 +38,7 @@ int validConvertedMinute(int);
 string validDuplicateTimeZone(string, string);
 
 void formatTwentyFourHourClockOutput(int, int, string, int, int, string);
+void formatTwelveHourClockOutput(int, int, string, string, int, int, string, string);
 //
 
 int main()
@@ -126,9 +127,6 @@ int main()
 			case 3: // convert a time to another time zone
 				if (timeMethods.getClockType() == TWELVE_HOUR_CLOCK) // 12-Hour Clock Case
 				{
-					// test 11 AM PST -> 5:00 AM AEST - case for where desired time is nearly a day ahead
-					// test 11 AM PST -> 2 PM EST - case for where desired time has the opposite meridiem
-					// test 4 AM PST -> 7 AM EST - case for where desired time has same meridiem
 					cout << "Input the hours, minutes, meridiem (AM/PM), and time zone abbreviation of the time to convert." << endl << endl;
 					hourInput = validHourInput(timeMethods.getClockType());
 					minuteInput = validMinuteInput();
@@ -175,14 +173,8 @@ int main()
 							minuteDesired = timeMethods.convertMinuteUTCtoZoneMinute(minuteUTC, zoneDesired);
 							minuteDesired = validConvertedMinute(minuteDesired);
 
-							if (minuteInput < 10 && minuteDesired < 10)
-							{
-								cout << hourInput << ":0" << minuteInput << " " << meridiemInput << " " << zoneInput << " is " << hourDesired << ":0" << minuteDesired << " " << meridiemDesired << " " << zoneDesired << endl << endl;
-							}
-							else
-							{
-								cout << hourInput << ":" << minuteInput << " " << meridiemInput << " " << zoneInput << " is " << hourDesired << ":" << minuteDesired << " " << meridiemDesired << " " << zoneDesired << endl << endl;
-							}
+							formatTwelveHourClockOutput(hourInput, minuteInput, meridiemInput, zoneInput, hourDesired, minuteDesired, meridiemDesired, zoneDesired);
+							break;
 						}
 						else // Every Other Time Zone
 						{
@@ -210,14 +202,8 @@ int main()
 							minuteDesired = timeMethods.convertMinuteUTCtoZoneMinute(minuteUTC, zoneDesired);
 							minuteDesired = validConvertedMinute(minuteDesired);
 
-							if (minuteInput < 10 && minuteDesired < 10)
-							{
-								cout << hourInput << ":0" << minuteInput << " " << meridiemInput << " " << zoneInput << " is " << hourDesired << ":0" << minuteDesired << " " << meridiemDesired << " " << zoneDesired << endl << endl;
-							}
-							else
-							{
-								cout << hourInput << ":" << minuteInput << " " << meridiemInput << " " << zoneInput << " is " << hourDesired << ":" << minuteDesired << " " << meridiemDesired << " " << zoneDesired << endl << endl;
-							}
+							formatTwelveHourClockOutput(hourInput, minuteInput, meridiemInput, zoneInput, hourDesired, minuteDesired, meridiemDesired, zoneDesired);
+							break;
 						}
 					}
 				}
@@ -652,5 +638,25 @@ void formatTwentyFourHourClockOutput(int hourInput, int minuteInput, string zone
 	else if (hourInput < 10 && minuteInput > 10 && hourDesired < 10 && minuteDesired < 10)
 	{
 		cout << "0" << hourInput << ":" << minuteInput << " " << zoneInput << " is 0" << hourDesired << ":0" << minuteDesired << " " << zoneDesired << endl << endl;
+	}
+}
+
+void formatTwelveHourClockOutput(int hourInput, int minuteInput, string meridiemInput, string zoneInput, int hourDesired, int minuteDesired, string meridiemDesired, string zoneDesired)
+{
+	if (minuteInput < 10 && minuteDesired < 10)
+	{
+		cout << hourInput << ":0" << minuteInput << " " << meridiemInput << " " << zoneInput << " is " << hourDesired << ":0" << minuteDesired << " " << meridiemDesired << " " << zoneDesired << endl << endl;
+	}
+	else if (minuteInput < 10 && minuteDesired > 10)
+	{
+		cout << hourInput << ":0" << minuteInput << " " << meridiemInput << " " << zoneInput << " is " << hourDesired << ":" << minuteDesired << " " << meridiemDesired << " " << zoneDesired << endl << endl;
+	}
+	else if (minuteInput > 10 && minuteDesired < 10)
+	{
+		cout << hourInput << ":" << minuteInput << " " << meridiemInput << " " << zoneInput << " is " << hourDesired << ":" << minuteDesired << " " << meridiemDesired << " " << zoneDesired << endl << endl;
+	}
+	else if (minuteInput > 10 && minuteDesired > 10)
+	{
+		cout << hourInput << ":" << minuteInput << " " << meridiemInput << " " << zoneInput << " is " << hourDesired << ":" << minuteDesired << " " << meridiemDesired << " " << zoneDesired << endl << endl;
 	}
 }
