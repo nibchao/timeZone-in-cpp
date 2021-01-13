@@ -124,12 +124,30 @@ bool timeMethods::searchTime(int hourInput, int minuteInput, string meridiemInpu
 	{
 		if (currentNode->hour == hourInput && currentNode->minute == minuteInput && currentNode->meridiem == meridiemInput && currentNode->zone == zoneInput)
 		{
-			cout << "Specified time was found in the list of stored times." << endl << endl;
+			cout << endl;
+			if (minuteInput < 10)
+			{
+				cout << hourInput << ":0" << minuteInput << " " << meridiemInput << " " << zoneInput << " was found in the list of stored times." << endl << endl;
+			}
+			else
+			{
+				cout << hourInput << ":" << minuteInput << " " << meridiemInput << " " << zoneInput << " was found in the list of stored times." << endl << endl;
+			}
 			return true;
 		}
 		currentNode = currentNode->next;
 	}
-	cout << endl << "Specified time was not found in the list of stored times." << endl << endl;
+
+	cout << endl;
+	if (minuteInput < 10)
+	{
+		cout << hourInput << ":0" << minuteInput << " " << meridiemInput << " " << zoneInput << " was not found in the list of stored times." << endl << endl;
+	}
+	else
+	{
+		cout << hourInput << ":" << minuteInput << " " << meridiemInput << " " << zoneInput << " was not found in the list of stored times." << endl << endl;
+	}
+
 	return false;
 }
 

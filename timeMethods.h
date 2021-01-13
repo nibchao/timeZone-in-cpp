@@ -19,6 +19,7 @@ private:
 		int hour;
 		int minute;
 		string zone;
+		string fullZoneName; // will need to use this to represent the full time zone name so there is a way to differentiate between multiple stored time zones with the same abbreviation 
 		string meridiem;
 		Node* next;
 	};

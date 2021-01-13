@@ -27,6 +27,7 @@ int displayMenu(int);
 int validHourInput(int);
 int validMinuteInput();
 string validZoneInput();
+string validStoreZoneInput();
 string validMeridiemInput();
 
 int validClockType(bool);
@@ -62,12 +63,9 @@ int main()
 	string tempZoneInput = "";
 
 	int clockType = 0;
-	//
-
 	int tempHourUTC = 0;
 	int tempHourDesired = 0;
-	int tempHourDesiredUTC = 0;
-	int test = 0;
+	//
 
 	timeMethods timeMethods;
 
@@ -81,24 +79,24 @@ int main()
 			case 1: // store a time
 				if (timeMethods.getClockType() == TWELVE_HOUR_CLOCK)
 				{
-					cout << "Storing time in " << clockType << "-Hour Clock Type:" << endl << endl;
+					cout << "===Storing time in " << clockType << "-Hour Clock Type===" << endl;
 
 					hourInput = validHourInput(timeMethods.getClockType());
 					hourInput = validConvertedHour(hourInput, timeMethods.getClockType());
 
 					minuteInput = validMinuteInput();
 					meridiemInput = validMeridiemInput();
-					zoneInput = validZoneInput();
+					zoneInput = validStoreZoneInput();
 
 					timeMethods.storeTime(hourInput, minuteInput, meridiemInput, zoneInput);
 				}
 				else
 				{
-					cout << "Storing time in " << clockType << "-Hour Clock Type:" << endl << endl;
+					cout << "===Storing time in " << clockType << "-Hour Clock Type===" << endl;
 
 					hourInput = validHourInput(timeMethods.getClockType());
 					minuteInput = validMinuteInput();
-					zoneInput = validZoneInput();
+					zoneInput = validStoreZoneInput();
 
 					timeMethods.storeTime(hourInput, minuteInput, zoneInput);
 				}
@@ -127,7 +125,7 @@ int main()
 			case 3: // convert a time to another time zone
 				if (timeMethods.getClockType() == TWELVE_HOUR_CLOCK) // 12-Hour Clock Case
 				{
-					cout << "Input the hours, minutes, meridiem (AM/PM), and time zone abbreviation of the time to convert." << endl << endl;
+					cout << "===Enter the hours, minutes, meridiem, and time zone abbreviation of the time to convert===" << endl;
 					hourInput = validHourInput(timeMethods.getClockType());
 					minuteInput = validMinuteInput();
 					meridiemInput = validMeridiemInput();
@@ -135,7 +133,7 @@ int main()
 
 					if (timeMethods.searchTime(hourInput, minuteInput, meridiemInput, zoneInput) == true)
 					{
-						cout << "Input the time zone abbreviation to convert the time to:" << endl << endl;
+						cout << "===Input the time zone abbreviation to convert the time to===" << endl;
 						zoneDesired = validZoneInput();
 						tempZoneInput = zoneDesired;
 
@@ -354,8 +352,6 @@ int validHourInput(int clockType)
 			cout << endl << "Enter the hours: ";
 		}
 	}
-	cout << endl;
-
 	return hourInput;
 }
 
@@ -379,26 +375,116 @@ int validMinuteInput()
 		cout << endl << "Error: A negative minute value was found, a non-integer was found, or inputted minutes were greater than or equal to " << MAX_MINUTE_VALUE << "." << endl;
 		cout << endl << "Enter the minutes: ";
 	}
-	cout << endl;
 
 	return minuteInput;
 }
 
-// need to add validation for when user inputs a time zone that does not exist such as typing a word
-// maybe have to add something similar to (meridiemInput != "AM" && meridiemInput != "PM") in the while condition
+// need to somehow set the node zone equal to the abbreviation even when duplicate time zone so when saying X:XX AM/PM <FULL ZONE NAME> is stored, the abbreviation is shown instead of the full zone name
+// this would also fix issue with performing the incorrect calculation on converting hours
+// maybe make a second string zone in the node struct to represent the full time zone name so you can still differentiate between two time zones with the same abbreviation
+// then modify the necessary conditions and check the full time zone name for duplicate cases
 string validZoneInput()
 {
 	string zoneInput = "";
 	cout << "Enter the time zone abbreviation: ";
 	getline(cin, zoneInput);
+	transform(zoneInput.begin(), zoneInput.end(), zoneInput.begin(), ::toupper);
 
-	while (zoneInput == "" || zoneInput.find_first_not_of(' ') || zoneInput.length() > MAX_ZONE_ABBREVIATION_LENGTH || noIntegersInZoneName(zoneInput) == false)
+	if (zoneInput == "BST" || zoneInput == "CST" || zoneInput == "IST" || zoneInput == "WST" || zoneInput == "AMST" || zoneInput == "GST" || zoneInput == "ADT" || zoneInput == "AMT" || zoneInput == "AST" || zoneInput == "CDT") // duplicate case 
 	{
-		cout << endl << "Error: Input was too long (maximum of 5 characters), blank characters were found, or integers were found." << endl;
+		zoneInput = validDuplicateTimeZone(zoneInput, zoneInput);
+		return zoneInput;
+	}
+
+	while (zoneInput == "" || zoneInput.find_first_not_of(' ') || noIntegersInZoneName(zoneInput) == false || 
+		(zoneInput != "LINT" && zoneInput != "TOST" &&
+		zoneInput != "CHADT" && zoneInput != "NZDT" && zoneInput != "FJST" && zoneInput != "PHOT" && zoneInput != "TKT" && zoneInput != "TOT" &&
+		zoneInput != "ANAT" && zoneInput != "ANAST" && zoneInput != "FJT" && zoneInput != "GILT" && zoneInput != "M" && zoneInput != "MAGST" && zoneInput != "MHT" && zoneInput != "NFDT" && zoneInput != "NRT" && zoneInput != "NZST" && zoneInput != "PETST" && zoneInput != "PETT" && zoneInput != "TVT" && zoneInput != "WAKT" && zoneInput != "WFT" &&
+		zoneInput != "AEDT" && zoneInput != "KOST" && zoneInput != "L" && zoneInput != "LHDT" && zoneInput != "MAGT" && zoneInput != "NCT" && zoneInput != "NFT" && zoneInput != "PONT" && zoneInput != "SAKT" && zoneInput != "SBT" && zoneInput != "SRET" && zoneInput != "VLAST" && zoneInput != "VUT" &&
+		zoneInput != "ACDT" && zoneInput != "LHST" && zoneInput != "AEST" && zoneInput != "CHUT" && zoneInput != "CHST" && zoneInput != "DDUT" && zoneInput != "K" && zoneInput != "PGT" && zoneInput != "VLAT" && zoneInput != "YAKST" && zoneInput != "YAPT" &&
+		zoneInput != "ACST" && zoneInput != "JST" && zoneInput != "AWDT" && zoneInput != "CHOST" && zoneInput != "I" && zoneInput != "IRKST" && zoneInput != "KST" && zoneInput != "PWT" && zoneInput != "TLT" && zoneInput != "ULAST" && zoneInput != "WIT" && zoneInput != "YAKT" &&
+		zoneInput != "ACWST" && zoneInput != "AWST" && zoneInput != "BNT" && zoneInput != "CAST" && zoneInput != "CHOT" && zoneInput != "H" && zoneInput != "HKT" && zoneInput != "HOVST" && zoneInput != "IRKT" && zoneInput != "KRAST" && zoneInput != "MYT" && zoneInput != "PHT" && zoneInput != "SGT" && zoneInput != "ULAT" && zoneInput != "WITA" &&
+		zoneInput != "WIB" && zoneInput != "CXT" && zoneInput != "DAVT" && zoneInput != "G" && zoneInput != "HOVT" && zoneInput != "ICT" && zoneInput != "KRAT" && zoneInput != "NOVST" && zoneInput != "NOVT" && zoneInput != "OMSST" &&
+		zoneInput != "MMT" && zoneInput != "CCT" && zoneInput != "ALMT" && zoneInput != "BTT" && zoneInput != "F" && zoneInput != "IOT" && zoneInput != "KGT" && zoneInput != "OMST" && zoneInput != "QYZT" && zoneInput != "VOST" && zoneInput != "YEKST" &&
+		zoneInput != "NPT" && zoneInput != "UZT" && zoneInput != "AQTT" && zoneInput != "AZST" && zoneInput != "E" && zoneInput != "MAWT" && zoneInput != "MVT" && zoneInput != "ORAT" && zoneInput != "PKT" && zoneInput != "TFT" && zoneInput != "TJT" && zoneInput != "TMT" && zoneInput != "YEKT" &&
+		zoneInput != "AFT" && zoneInput != "IRDT" && zoneInput != "AZT" && zoneInput != "D" && zoneInput != "GET" && zoneInput != "KUYT" && zoneInput != "MSD" && zoneInput != "MUT" && zoneInput != "RET" && zoneInput != "SAMT" && zoneInput != "SCT" &&
+		zoneInput != "IRST" && zoneInput != "MSK" && zoneInput != "C" && zoneInput != "EAT" && zoneInput != "EEST" && zoneInput != "FET" && zoneInput != "IDT" && zoneInput != "SYOT" && zoneInput != "TRT" &&
+		zoneInput != "EET" && zoneInput != "B" && zoneInput != "CAT" && zoneInput != "CEST" && zoneInput != "SAST" && zoneInput != "WAST" &&
+		zoneInput != "CET" && zoneInput != "A" && zoneInput != "WAT" && zoneInput != "WEST" &&
+		zoneInput != "GMT" && zoneInput != "AZOST" && zoneInput != "EGST" && zoneInput != "WET" && zoneInput != "WT" && zoneInput != "Z" &&
+		zoneInput != "CVT" && zoneInput != "AZOT" && zoneInput != "EGT" && zoneInput != "N" &&
+		zoneInput != "BRST" && zoneInput != "FNT" && zoneInput != "O" && zoneInput != "PMDT" && zoneInput != "UYST" && zoneInput != "WGST" &&
+		zoneInput != "ART" && zoneInput != "BRT" && zoneInput != "CLST" && zoneInput != "FKST" && zoneInput != "GFT" && zoneInput != "P" && zoneInput != "PMST" && zoneInput != "PYST" && zoneInput != "ROTT" && zoneInput != "SRT" && zoneInput != "UYT" && zoneInput != "WARST" && zoneInput != "WGT" && zoneInput != "NST" &&
+		zoneInput != "VET" && zoneInput != "BOT" && zoneInput != "CIDST" && zoneInput != "CLT" && zoneInput != "EDT" && zoneInput != "FKT" && zoneInput != "GYT" && zoneInput != "PYT" && zoneInput != "Q" &&
+		zoneInput != "EST" && zoneInput != "ACT" && zoneInput != "CIST" && zoneInput != "COT" && zoneInput != "EASST" && zoneInput != "ECT" && zoneInput != "PET" && zoneInput != "R" &&
+		zoneInput != "EAST" && zoneInput != "GALT" && zoneInput != "MDT" && zoneInput != "S" &&
+		zoneInput != "MST" && zoneInput != "PDT" && zoneInput != "T" &&
+		zoneInput != "PST" && zoneInput != "AKDT" && zoneInput != "U" &&
+		zoneInput != "AKST" && zoneInput != "GAMT" && zoneInput != "HDT" && zoneInput != "V" && zoneInput != "MART" &&
+		zoneInput != "HST" && zoneInput != "CKT" && zoneInput != "TAHT" && zoneInput != "W" &&
+		zoneInput != "NUT" && zoneInput != "SST" && zoneInput != "X" &&
+		zoneInput != "AoE" && zoneInput != "Y" &&
+		zoneInput != "BST" && zoneInput != "CST" && zoneInput != "IST" && zoneInput != "WST" && zoneInput != "AMST" && zoneInput != "GST" && zoneInput != "ADT" && zoneInput != "AMT" && zoneInput != "AST" && zoneInput != "CDT")
+		)
+	{
+		cout << endl << "Error: Abbreviation was too long (maximum of 5 characters), blank characters were found, integers were found, or abbreviation does not exist." << endl;
 		cout << endl << "Enter the time zone abbrevation: ";
 		getline(cin, zoneInput);
 	}
 	transform(zoneInput.begin(), zoneInput.end(), zoneInput.begin(), ::toupper);
+
+	return zoneInput;
+}
+
+// this function may not be necessary if i figure out how to modify validZoneInput for 'store a time' case and any other case that calls validZoneInput such as getting zone name to convert to or maybe 'delete a time' (maybe 'delete a time' goes with 'store a time' ?)
+string validStoreZoneInput()
+{
+	string zoneInput = "";
+	cout << "Enter the time zone abbreviation: ";
+	getline(cin, zoneInput);
+	transform(zoneInput.begin(), zoneInput.end(), zoneInput.begin(), ::toupper);
+
+	while (zoneInput == "" || zoneInput.find_first_not_of(' ') || noIntegersInZoneName(zoneInput) == false ||
+		(zoneInput != "LINT" && zoneInput != "TOST" &&
+		zoneInput != "CHADT" && zoneInput != "NZDT" && zoneInput != "FJST" && zoneInput != "PHOT" && zoneInput != "TKT" && zoneInput != "TOT" &&
+		zoneInput != "ANAT" && zoneInput != "ANAST" && zoneInput != "FJT" && zoneInput != "GILT" && zoneInput != "M" && zoneInput != "MAGST" && zoneInput != "MHT" && zoneInput != "NFDT" && zoneInput != "NRT" && zoneInput != "NZST" && zoneInput != "PETST" && zoneInput != "PETT" && zoneInput != "TVT" && zoneInput != "WAKT" && zoneInput != "WFT" &&
+		zoneInput != "AEDT" && zoneInput != "KOST" && zoneInput != "L" && zoneInput != "LHDT" && zoneInput != "MAGT" && zoneInput != "NCT" && zoneInput != "NFT" && zoneInput != "PONT" && zoneInput != "SAKT" && zoneInput != "SBT" && zoneInput != "SRET" && zoneInput != "VLAST" && zoneInput != "VUT" &&
+		zoneInput != "ACDT" && zoneInput != "LHST" && zoneInput != "AEST" && zoneInput != "CHUT" && zoneInput != "CHST" && zoneInput != "DDUT" && zoneInput != "K" && zoneInput != "PGT" && zoneInput != "VLAT" && zoneInput != "YAKST" && zoneInput != "YAPT" &&
+		zoneInput != "ACST" && zoneInput != "JST" && zoneInput != "AWDT" && zoneInput != "CHOST" && zoneInput != "I" && zoneInput != "IRKST" && zoneInput != "KST" && zoneInput != "PWT" && zoneInput != "TLT" && zoneInput != "ULAST" && zoneInput != "WIT" && zoneInput != "YAKT" &&
+		zoneInput != "ACWST" && zoneInput != "AWST" && zoneInput != "BNT" && zoneInput != "CAST" && zoneInput != "CHOT" && zoneInput != "H" && zoneInput != "HKT" && zoneInput != "HOVST" && zoneInput != "IRKT" && zoneInput != "KRAST" && zoneInput != "MYT" && zoneInput != "PHT" && zoneInput != "SGT" && zoneInput != "ULAT" && zoneInput != "WITA" &&
+		zoneInput != "WIB" && zoneInput != "CXT" && zoneInput != "DAVT" && zoneInput != "G" && zoneInput != "HOVT" && zoneInput != "ICT" && zoneInput != "KRAT" && zoneInput != "NOVST" && zoneInput != "NOVT" && zoneInput != "OMSST" &&
+		zoneInput != "MMT" && zoneInput != "CCT" && zoneInput != "ALMT" && zoneInput != "BTT" && zoneInput != "F" && zoneInput != "IOT" && zoneInput != "KGT" && zoneInput != "OMST" && zoneInput != "QYZT" && zoneInput != "VOST" && zoneInput != "YEKST" &&
+		zoneInput != "NPT" && zoneInput != "UZT" && zoneInput != "AQTT" && zoneInput != "AZST" && zoneInput != "E" && zoneInput != "MAWT" && zoneInput != "MVT" && zoneInput != "ORAT" && zoneInput != "PKT" && zoneInput != "TFT" && zoneInput != "TJT" && zoneInput != "TMT" && zoneInput != "YEKT" &&
+		zoneInput != "AFT" && zoneInput != "IRDT" && zoneInput != "AZT" && zoneInput != "D" && zoneInput != "GET" && zoneInput != "KUYT" && zoneInput != "MSD" && zoneInput != "MUT" && zoneInput != "RET" && zoneInput != "SAMT" && zoneInput != "SCT" &&
+		zoneInput != "IRST" && zoneInput != "MSK" && zoneInput != "C" && zoneInput != "EAT" && zoneInput != "EEST" && zoneInput != "FET" && zoneInput != "IDT" && zoneInput != "SYOT" && zoneInput != "TRT" &&
+		zoneInput != "EET" && zoneInput != "B" && zoneInput != "CAT" && zoneInput != "CEST" && zoneInput != "SAST" && zoneInput != "WAST" &&
+		zoneInput != "CET" && zoneInput != "A" && zoneInput != "WAT" && zoneInput != "WEST" &&
+		zoneInput != "GMT" && zoneInput != "AZOST" && zoneInput != "EGST" && zoneInput != "WET" && zoneInput != "WT" && zoneInput != "Z" &&
+		zoneInput != "CVT" && zoneInput != "AZOT" && zoneInput != "EGT" && zoneInput != "N" &&
+		zoneInput != "BRST" && zoneInput != "FNT" && zoneInput != "O" && zoneInput != "PMDT" && zoneInput != "UYST" && zoneInput != "WGST" &&
+		zoneInput != "ART" && zoneInput != "BRT" && zoneInput != "CLST" && zoneInput != "FKST" && zoneInput != "GFT" && zoneInput != "P" && zoneInput != "PMST" && zoneInput != "PYST" && zoneInput != "ROTT" && zoneInput != "SRT" && zoneInput != "UYT" && zoneInput != "WARST" && zoneInput != "WGT" && zoneInput != "NST" &&
+		zoneInput != "VET" && zoneInput != "BOT" && zoneInput != "CIDST" && zoneInput != "CLT" && zoneInput != "EDT" && zoneInput != "FKT" && zoneInput != "GYT" && zoneInput != "PYT" && zoneInput != "Q" &&
+		zoneInput != "EST" && zoneInput != "ACT" && zoneInput != "CIST" && zoneInput != "COT" && zoneInput != "EASST" && zoneInput != "ECT" && zoneInput != "PET" && zoneInput != "R" &&
+		zoneInput != "EAST" && zoneInput != "GALT" && zoneInput != "MDT" && zoneInput != "S" &&
+		zoneInput != "MST" && zoneInput != "PDT" && zoneInput != "T" &&
+		zoneInput != "PST" && zoneInput != "AKDT" && zoneInput != "U" &&
+		zoneInput != "AKST" && zoneInput != "GAMT" && zoneInput != "HDT" && zoneInput != "V" && zoneInput != "MART" &&
+		zoneInput != "HST" && zoneInput != "CKT" && zoneInput != "TAHT" && zoneInput != "W" &&
+		zoneInput != "NUT" && zoneInput != "SST" && zoneInput != "X" &&
+		zoneInput != "AoE" && zoneInput != "Y" &&
+		zoneInput != "BST" && zoneInput != "CST" && zoneInput != "IST" && zoneInput != "WST" && zoneInput != "AMST" && zoneInput != "GST" && zoneInput != "ADT" && zoneInput != "AMT" && zoneInput != "AST" && zoneInput != "CDT")
+		)
+	{
+		cout << endl << "Error: Abbreviation was too long (maximum of 5 characters), blank characters were found, integers were found, or abbreviation does not exist." << endl;
+		cout << endl << "Enter the time zone abbrevation: ";
+		getline(cin, zoneInput);
+		transform(zoneInput.begin(), zoneInput.end(), zoneInput.begin(), ::toupper);
+	}
+
+	if (zoneInput == "BST" || zoneInput == "CST" || zoneInput == "IST" || zoneInput == "WST" || zoneInput == "AMST" || zoneInput == "GST" || zoneInput == "ADT" || zoneInput == "AMT" || zoneInput == "AST" || zoneInput == "CDT")
+	{
+		zoneInput = validDuplicateTimeZone(zoneInput, zoneInput);
+	}
 
 	return zoneInput;
 }
@@ -417,7 +503,6 @@ string validMeridiemInput()
 		getline(cin, meridiemInput);
 		transform(meridiemInput.begin(), meridiemInput.end(), meridiemInput.begin(), ::toupper);
 	}
-	cout << endl;
 
 	return meridiemInput;
 }
@@ -450,10 +535,6 @@ int validClockType(bool noStoredTimes)
 	return clockType;
 }
 
-// first - make hourInput positive if it's negative
-// second - check if hourInput is equal to 0
-// third - check if hourInput exceeds the largest valid hour value
-// fourth - check if hourInput is equal to 0 if doing modulo on hourInput resulted in 0
 int validConvertedHour(int hourInput, int clockType)
 {
 	if (clockType == TWELVE_HOUR_CLOCK)
@@ -498,15 +579,13 @@ int validConvertedHour(int hourInput, int clockType)
 	return hourInput;
 }
 
-// first - make minuteInput positive if it's negative
-// second - check if minuteInput exceeds the largest valid minute value
 int validConvertedMinute(int minuteInput)
 {
-	if (minuteInput < 0) // check if minuteInput is negative first
+	if (minuteInput < 0)
 	{
 		minuteInput = minuteInput * -1;
 	}
-	if (minuteInput > 60) // check if minuteInput is greater than 60
+	if (minuteInput > 60)
 	{
 		minuteInput = minuteInput % 60;
 	}
@@ -546,8 +625,8 @@ string validDuplicateTimeZone(string zoneDesired, string tempZone)
 		}
 	}
 
-	while (zoneDesired == "" || zoneDesired.find_first_not_of(' ') || noIntegersInZoneName(zoneDesired) == false
-			|| (zoneDesired != "West Samoa Time" && zoneDesired != "Bougainville Standard Time" && zoneDesired != "China Standard Time" && zoneDesired != "Bangladesh Standard Time" && zoneDesired != "India Standard Time" && zoneDesired != "Armenia Summer Time"
+	while (zoneDesired == "" || zoneDesired.find_first_not_of(' ') || noIntegersInZoneName(zoneDesired) == false || 
+			(zoneDesired != "West Samoa Time" && zoneDesired != "Bougainville Standard Time" && zoneDesired != "China Standard Time" && zoneDesired != "Bangladesh Standard Time" && zoneDesired != "India Standard Time" && zoneDesired != "Armenia Summer Time"
 			&& zoneDesired != "Gulf Standard Time" && zoneDesired != "Arabia Daylight Time" && zoneDesired != "Armenia Time" && zoneDesired != "Arabia Standard Time" && zoneDesired != "Israel Standard Time" && zoneDesired != "British Summer Time"
 			&& zoneDesired != "Irish Standard Time" && zoneDesired != "Western Sahara Summer Time" && zoneDesired != "South Georgia Time" && zoneDesired != "Atlantic Daylight Time" && zoneDesired != "Amazon Summer Time" && zoneDesired != "Amazon Time"
 			&& zoneDesired != "Atlantic Standard Time" && zoneDesired != "Cuba Daylight Time" && zoneDesired != "Central Daylight Time" && zoneDesired != "Cuba Standard Time" && zoneDesired != "Central Standard Time"))
