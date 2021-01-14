@@ -37,12 +37,12 @@ public:
 	~timeMethods();
 
 	// 12-Hour Clock Function Prototypes
-	void storeTime(int, int, string, string);
+	void storeTime(int, int, string, string, string);
 	void deleteTime(int, int, string, string);
 	bool searchTime(int, int, string, string);
 
 	// 24-Hour Clock Function Prototypes
-	void storeTime(int, int, string);
+	void storeTime(int, int, string, string);
 	void deleteTime(int, int, string);
 	bool searchTime(int, int, string);
 

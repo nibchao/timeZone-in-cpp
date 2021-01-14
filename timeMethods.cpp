@@ -25,13 +25,14 @@ timeMethods::~timeMethods()
 }
 
 // storeTime method - 12-Hour Clock Version
-void timeMethods::storeTime(int hourInput, int minuteInput, string meridiemInput, string zoneInput)
+void timeMethods::storeTime(int hourInput, int minuteInput, string meridiemInput, string zoneInputAbbreviation, string fullZoneInput)
 {
 	Node* newNode = new Node;
 	newNode->hour = hourInput;
 	newNode->minute = minuteInput;
 	newNode->meridiem = meridiemInput;
-	newNode->zone = zoneInput;
+	newNode->zone = zoneInputAbbreviation;
+	newNode->fullZoneName = fullZoneInput;
 	newNode->next = nullptr;
 
 	Node* currentNode = head;
@@ -50,11 +51,11 @@ void timeMethods::storeTime(int hourInput, int minuteInput, string meridiemInput
 	}
 	if (minuteInput < 10)
 	{
-		cout << endl << hourInput << ":0" << minuteInput << " " << meridiemInput << " " << zoneInput << " has been stored." << endl << endl;
+		cout << endl << hourInput << ":0" << minuteInput << " " << meridiemInput << " " << zoneInputAbbreviation << " has been stored." << endl << endl;
 	}
 	else
 	{
-		cout << endl << hourInput << ":" << minuteInput << " " << meridiemInput << " " << zoneInput << " has been stored." << endl << endl;
+		cout << endl << hourInput << ":" << minuteInput << " " << meridiemInput << " " << zoneInputAbbreviation << " has been stored." << endl << endl;
 	}
 }
 
@@ -69,22 +70,22 @@ void timeMethods::deleteTime(int hourInput, int minuteInput, string meridiemInpu
 		return;
 	}
 
-	if (head->hour == hourInput && head->minute == minuteInput && head->meridiem == meridiemInput && head->zone == zoneInput)
+	if (head->hour == hourInput && head->minute == minuteInput && head->meridiem == meridiemInput && head->fullZoneName == zoneInput)
 	{
 		head = currentNode->next;
 		delete(currentNode);
 		if (minuteInput < 10)
 		{
-			cout << hourInput << ":0" << minuteInput << " " << meridiemInput << " " << zoneInput << " has been deleted." << endl << endl;
+			cout << hourInput << ":0" << minuteInput << " " << meridiemInput << " " << currentNode->zone << " has been deleted." << endl << endl;
 		}
 		else
 		{
-			cout << hourInput << ":" << minuteInput << " " << meridiemInput << " " << zoneInput << " has been deleted." << endl << endl;
+			cout << hourInput << ":" << minuteInput << " " << meridiemInput << " " << currentNode->zone << " has been deleted." << endl << endl;
 		}
 		return;
 	}
 
-	while (currentNode != nullptr && currentNode->next->hour != hourInput && currentNode->next->minute != minuteInput && currentNode->next->meridiem != meridiemInput && currentNode->next->zone != zoneInput)
+	while (currentNode != nullptr && currentNode->next->hour != hourInput && currentNode->next->minute != minuteInput && currentNode->next->meridiem != meridiemInput && currentNode->next->fullZoneName != zoneInput)
 	{
 		currentNode = currentNode->next;
 	}
@@ -101,11 +102,11 @@ void timeMethods::deleteTime(int hourInput, int minuteInput, string meridiemInpu
 
 	if (minuteInput < 10)
 	{
-		cout << hourInput << ":0" << minuteInput << " " << meridiemInput << " " << zoneInput << " has been deleted." << endl << endl;
+		cout << hourInput << ":0" << minuteInput << " " << meridiemInput << " " << currentNode->zone << " has been deleted." << endl << endl;
 	}
 	else
 	{
-		cout << hourInput << ":" << minuteInput << " " << meridiemInput << " " << zoneInput << " has been deleted." << endl << endl;
+		cout << hourInput << ":" << minuteInput << " " << meridiemInput << " " << currentNode->zone << " has been deleted." << endl << endl;
 	}
 }
 
@@ -122,16 +123,16 @@ bool timeMethods::searchTime(int hourInput, int minuteInput, string meridiemInpu
 
 	while (currentNode)
 	{
-		if (currentNode->hour == hourInput && currentNode->minute == minuteInput && currentNode->meridiem == meridiemInput && currentNode->zone == zoneInput)
+		if (currentNode->hour == hourInput && currentNode->minute == minuteInput && currentNode->meridiem == meridiemInput && currentNode->fullZoneName == zoneInput)
 		{
 			cout << endl;
 			if (minuteInput < 10)
 			{
-				cout << hourInput << ":0" << minuteInput << " " << meridiemInput << " " << zoneInput << " was found in the list of stored times." << endl << endl;
+				cout << hourInput << ":0" << minuteInput << " " << meridiemInput << " " << currentNode->zone << " was found in the list of stored times." << endl << endl;
 			}
 			else
 			{
-				cout << hourInput << ":" << minuteInput << " " << meridiemInput << " " << zoneInput << " was found in the list of stored times." << endl << endl;
+				cout << hourInput << ":" << minuteInput << " " << meridiemInput << " " << currentNode->zone << " was found in the list of stored times." << endl << endl;
 			}
 			return true;
 		}
@@ -152,12 +153,13 @@ bool timeMethods::searchTime(int hourInput, int minuteInput, string meridiemInpu
 }
 
 // overloaded storeTime method - 24-Hour Clock Version
-void timeMethods::storeTime(int hourInput, int minuteInput, string zoneInput)
+void timeMethods::storeTime(int hourInput, int minuteInput, string zoneInputAbbreviation, string fullZoneInput)
 {
 	Node* newNode = new Node;
 	newNode->hour = hourInput;
 	newNode->minute = minuteInput;
-	newNode->zone = zoneInput;
+	newNode->zone = zoneInputAbbreviation;
+	newNode->fullZoneName = fullZoneInput;
 	newNode->next = nullptr;
 
 	Node* currentNode = head;
@@ -179,22 +181,22 @@ void timeMethods::storeTime(int hourInput, int minuteInput, string zoneInput)
 	{
 		if (minuteInput < 10)
 		{
-			cout << endl << "0" << hourInput << ":0" << minuteInput << " " << zoneInput << " has been stored." << endl << endl;
+			cout << endl << "0" << hourInput << ":0" << minuteInput << " " << zoneInputAbbreviation << " has been stored." << endl << endl;
 		}
 		else
 		{
-			cout << endl << "0" << hourInput << ":" << minuteInput << " " << zoneInput << " has been stored." << endl << endl;
+			cout << endl << "0" << hourInput << ":" << minuteInput << " " << zoneInputAbbreviation << " has been stored." << endl << endl;
 		}
 	}
 	else
 	{
 		if (minuteInput < 10)
 		{
-			cout << endl << hourInput << ":0" << minuteInput << " " << zoneInput << " has been stored." << endl << endl;
+			cout << endl << hourInput << ":0" << minuteInput << " " << zoneInputAbbreviation << " has been stored." << endl << endl;
 		}
 		else
 		{
-			cout << endl << hourInput << ":" << minuteInput << " " << zoneInput << " has been stored." << endl << endl;
+			cout << endl << hourInput << ":" << minuteInput << " " << zoneInputAbbreviation << " has been stored." << endl << endl;
 		}
 	}
 }
@@ -210,7 +212,7 @@ void timeMethods::deleteTime(int hourInput, int minuteInput, string zoneInput)
 		return;
 	}
 
-	if (head->hour == hourInput && head->minute == minuteInput && head->zone == zoneInput)
+	if (head->hour == hourInput && head->minute == minuteInput && head->fullZoneName == zoneInput)
 	{
 		head = currentNode->next;
 		delete(currentNode);
@@ -218,28 +220,28 @@ void timeMethods::deleteTime(int hourInput, int minuteInput, string zoneInput)
 		{
 			if (minuteInput < 10)
 			{
-				cout << "0" << hourInput << ":0" << minuteInput << " " << zoneInput << " has been deleted." << endl << endl;
+				cout << "0" << hourInput << ":0" << minuteInput << " " << currentNode->zone << " has been deleted." << endl << endl;
 			}
 			else
 			{
-				cout << "0" << hourInput << ":" << minuteInput << " " << zoneInput << " has been deleted." << endl << endl;
+				cout << "0" << hourInput << ":" << minuteInput << " " << currentNode->zone << " has been deleted." << endl << endl;
 			}
 		}
 		else
 		{
 			if (minuteInput < 10)
 			{
-				cout << hourInput << ":0" << minuteInput << " " << zoneInput << " has been deleted." << endl << endl;
+				cout << hourInput << ":0" << minuteInput << " " << currentNode->zone << " has been deleted." << endl << endl;
 			}
 			else
 			{
-				cout << hourInput << ":" << minuteInput << " " << zoneInput << " has been deleted." << endl << endl;
+				cout << hourInput << ":" << minuteInput << " " << currentNode->zone << " has been deleted." << endl << endl;
 			}
 		}
 		return;
 	}
 
-	while (currentNode != nullptr && currentNode->next->hour != hourInput && currentNode->next->minute != minuteInput && currentNode->next->zone != zoneInput)
+	while (currentNode != nullptr && currentNode->next->hour != hourInput && currentNode->next->minute != minuteInput && currentNode->next->fullZoneName != zoneInput)
 	{
 		currentNode = currentNode->next;
 	}
@@ -258,22 +260,22 @@ void timeMethods::deleteTime(int hourInput, int minuteInput, string zoneInput)
 	{
 		if (minuteInput < 10)
 		{
-			cout << "0" << hourInput << ":0" << minuteInput << " " << zoneInput << " has been deleted." << endl << endl;
+			cout << "0" << hourInput << ":0" << minuteInput << " " << currentNode->zone << " has been deleted." << endl << endl;
 		}
 		else
 		{
-			cout << "0" << hourInput << ":" << minuteInput << " " << zoneInput << " has been deleted." << endl << endl;
+			cout << "0" << hourInput << ":" << minuteInput << " " << currentNode->zone << " has been deleted." << endl << endl;
 		}
 	}
 	else
 	{
 		if (minuteInput < 10)
 		{
-			cout << hourInput << ":0" << minuteInput << " " << zoneInput << " has been deleted." << endl << endl;
+			cout << hourInput << ":0" << minuteInput << " " << currentNode->zone << " has been deleted." << endl << endl;
 		}
 		else
 		{
-			cout << hourInput << ":" << minuteInput << " " << zoneInput << " has been deleted." << endl << endl;
+			cout << hourInput << ":" << minuteInput << " " << currentNode->zone << " has been deleted." << endl << endl;
 		}
 	}
 }
@@ -291,14 +293,32 @@ bool timeMethods::searchTime(int hourInput, int minuteInput, string zoneInput)
 
 	while (currentNode)
 	{
-		if (currentNode->hour == hourInput && currentNode->minute == minuteInput && currentNode->zone == zoneInput)
+		if (currentNode->hour == hourInput && currentNode->minute == minuteInput && currentNode->fullZoneName == zoneInput)
 		{
-			cout << "Specified time was found in the list of stored times." << endl << endl;
+			cout << endl;
+			if (minuteInput < 10)
+			{
+				cout << hourInput << ":0" << minuteInput << " " << currentNode->zone << " was found in the list of stored times." << endl << endl;
+			}
+			else
+			{
+				cout << hourInput << ":" << minuteInput << " " << currentNode->zone << " was found in the list of stored times." << endl << endl;
+			}
 			return true;
 		}
 		currentNode = currentNode->next;
 	}
-	cout << endl << "Specified time was not found in the list of stored times." << endl << endl;
+
+	cout << endl;
+	if (minuteInput < 10)
+	{
+		cout << hourInput << ":0" << minuteInput << " " << zoneInput << " was not found in the list of stored times." << endl << endl;
+	}
+	else
+	{
+		cout << hourInput << ":" << minuteInput << " " << zoneInput << " was not found in the list of stored times." << endl << endl;
+	}
+
 	return false;
 }
 

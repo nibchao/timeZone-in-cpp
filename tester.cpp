@@ -27,7 +27,6 @@ int displayMenu(int);
 int validHourInput(int);
 int validMinuteInput();
 string validZoneInput();
-string validStoreZoneInput();
 string validMeridiemInput();
 
 int validClockType(bool);
@@ -65,6 +64,10 @@ int main()
 	int clockType = 0;
 	int tempHourUTC = 0;
 	int tempHourDesired = 0;
+
+	int zoneInputLength = 0;
+	string placeHolder = "";
+	string zoneInputAbbreviation = "";
 	//
 
 	timeMethods timeMethods;
@@ -86,9 +89,35 @@ int main()
 
 					minuteInput = validMinuteInput();
 					meridiemInput = validMeridiemInput();
-					zoneInput = validStoreZoneInput();
+					zoneInput = validZoneInput();
 
-					timeMethods.storeTime(hourInput, minuteInput, meridiemInput, zoneInput);
+					// gets the abbreviation of the time zone for duplicate cases where full time zone names are asked (example: Atlantic Standard Time -> zoneInputAbbreviation = AST)
+					zoneInputAbbreviation.clear();
+					zoneInputLength = zoneInput.length();
+					for (int cnt = 0; cnt < zoneInputLength; cnt++)
+					{
+						if (cnt == 0)
+						{
+							zoneInput[cnt] = toupper(zoneInput[cnt]);
+							placeHolder = zoneInput.substr(cnt, 1);
+							zoneInputAbbreviation += placeHolder;
+
+						}
+						else if (zoneInput[cnt - 1] == ' ')
+						{
+							zoneInput[cnt] = toupper(zoneInput[cnt]);
+							placeHolder = zoneInput.substr(cnt, 1);
+							zoneInputAbbreviation += placeHolder;
+						}
+					}
+
+					// since the above for loop won't make zoneInputAbbreviation correct for non-duplicate time zone cases, this re-sets zoneInputAbbreviation equal to zoneInput which is the correct time zone abbreviation; should not matter in the end though
+					if (zoneInputAbbreviation.length() == 1)
+					{
+						zoneInputAbbreviation = zoneInput;
+					}
+
+					timeMethods.storeTime(hourInput, minuteInput, meridiemInput, zoneInputAbbreviation, zoneInput);
 				}
 				else
 				{
@@ -96,9 +125,35 @@ int main()
 
 					hourInput = validHourInput(timeMethods.getClockType());
 					minuteInput = validMinuteInput();
-					zoneInput = validStoreZoneInput();
+					zoneInput = validZoneInput();
 
-					timeMethods.storeTime(hourInput, minuteInput, zoneInput);
+					// gets the abbreviation of the time zone for duplicate cases where full time zone names are asked (example: Atlantic Standard Time -> zoneInputAbbreviation = AST)
+					zoneInputAbbreviation.clear();
+					zoneInputLength = zoneInput.length();
+					for (int cnt = 0; cnt < zoneInputLength; cnt++)
+					{
+						if (cnt == 0)
+						{
+							zoneInput[cnt] = toupper(zoneInput[cnt]);
+							placeHolder = zoneInput.substr(cnt, 1);
+							zoneInputAbbreviation += placeHolder;
+
+						}
+						else if (zoneInput[cnt - 1] == ' ')
+						{
+							zoneInput[cnt] = toupper(zoneInput[cnt]);
+							placeHolder = zoneInput.substr(cnt, 1);
+							zoneInputAbbreviation += placeHolder;
+						}
+					}
+
+					// since the above for loop won't make zoneInputAbbreviation correct for non-duplicate time zone cases, this re-sets zoneInputAbbreviation equal to zoneInput which is the correct time zone abbreviation; should not matter in the end though
+					if (zoneInputAbbreviation.length() == 1)
+					{
+						zoneInputAbbreviation = zoneInput;
+					}
+
+					timeMethods.storeTime(hourInput, minuteInput, zoneInputAbbreviation, zoneInput);
 				}
 				break;
 			case 2: // delete a time
@@ -131,13 +186,39 @@ int main()
 					meridiemInput = validMeridiemInput();
 					zoneInput = validZoneInput();
 
+					// gets the abbreviation of the time zone for duplicate cases where full time zone names are asked (example: Atlantic Standard Time -> zoneInputAbbreviation = AST)
+					zoneInputAbbreviation.clear();
+					zoneInputLength = zoneInput.length();
+					for (int cnt = 0; cnt < zoneInputLength; cnt++)
+					{
+						if (cnt == 0)
+						{
+							zoneInput[cnt] = toupper(zoneInput[cnt]);
+							placeHolder = zoneInput.substr(cnt, 1);
+							zoneInputAbbreviation += placeHolder;
+
+						}
+						else if (zoneInput[cnt - 1] == ' ')
+						{
+							zoneInput[cnt] = toupper(zoneInput[cnt]);
+							placeHolder = zoneInput.substr(cnt, 1);
+							zoneInputAbbreviation += placeHolder;
+						}
+					}
+
+					// since the above for loop won't make zoneInputAbbreviation correct for non-duplicate time zone cases, this re-sets zoneInputAbbreviation equal to zoneInput which is the correct time zone abbreviation; should not matter in the end though
+					if (zoneInputAbbreviation.length() == 1)
+					{
+						zoneInputAbbreviation = zoneInput;
+					}
+
 					if (timeMethods.searchTime(hourInput, minuteInput, meridiemInput, zoneInput) == true)
 					{
 						cout << "===Input the time zone abbreviation to convert the time to===" << endl;
 						zoneDesired = validZoneInput();
 						tempZoneInput = zoneDesired;
 
-						if (zoneDesired == zoneInput)
+						if (zoneDesired == zoneInputAbbreviation)
 						{
 							cout << "Error: Desired time zone is the same time zone as the stored time! Returning to menu." << endl;
 							break;
@@ -147,11 +228,11 @@ int main()
 						{
 							zoneDesired = validDuplicateTimeZone(zoneDesired, tempZoneInput);
 
-							hourUTC = timeMethods.HourToUTCDuplicateAbbreviation(hourInput, zoneInput);
+							hourUTC = timeMethods.HourToUTCDuplicateAbbreviation(hourInput, zoneInputAbbreviation);
 							tempHourUTC = hourUTC;
 							hourUTC = validConvertedHour(hourUTC, timeMethods.getClockType());
 
-							minuteUTC = timeMethods.MinuteToUTC(minuteInput, zoneInput);
+							minuteUTC = timeMethods.MinuteToUTC(minuteInput, zoneInputAbbreviation);
 							minuteUTC = validConvertedMinute(minuteUTC);
 
 							hourDesired = timeMethods.convertHourUTCtoZoneHour(tempHourUTC, zoneDesired);
@@ -171,16 +252,17 @@ int main()
 							minuteDesired = timeMethods.convertMinuteUTCtoZoneMinute(minuteUTC, zoneDesired);
 							minuteDesired = validConvertedMinute(minuteDesired);
 
-							formatTwelveHourClockOutput(hourInput, minuteInput, meridiemInput, zoneInput, hourDesired, minuteDesired, meridiemDesired, zoneDesired);
+							formatTwelveHourClockOutput(hourInput, minuteInput, meridiemInput, zoneInputAbbreviation, hourDesired, minuteDesired, meridiemDesired, zoneDesired);
 							break;
 						}
 						else // Every Other Time Zone
 						{
-							hourUTC = timeMethods.HourToUTC(hourInput, zoneInput);
+							hourUTC = timeMethods.HourToUTC(hourInput, zoneInputAbbreviation); // 11:00 AM AST (Atlantic Standard Time) -> 6:00 AM EST (Eastern Standard Time); need to add duplicate time zone abbreviation cases to all XToUTC functions and convertXUTCtoZoneHour/Minute functions
+																							   // need to apply the fix to this to every conversion case (12-hour duplicate/not duplicate, 24-hour duplicate/not duplicate)
 							tempHourUTC = hourUTC;
 							hourUTC = validConvertedHour(hourUTC, timeMethods.getClockType());
 
-							minuteUTC = timeMethods.MinuteToUTC(minuteInput, zoneInput);
+							minuteUTC = timeMethods.MinuteToUTC(minuteInput, zoneInputAbbreviation);
 							minuteUTC = validConvertedMinute(minuteUTC);
 
 							hourDesired = timeMethods.convertHourUTCtoZoneHour(tempHourUTC, zoneDesired);
@@ -200,7 +282,7 @@ int main()
 							minuteDesired = timeMethods.convertMinuteUTCtoZoneMinute(minuteUTC, zoneDesired);
 							minuteDesired = validConvertedMinute(minuteDesired);
 
-							formatTwelveHourClockOutput(hourInput, minuteInput, meridiemInput, zoneInput, hourDesired, minuteDesired, meridiemDesired, zoneDesired);
+							formatTwelveHourClockOutput(hourInput, minuteInput, meridiemInput, zoneInputAbbreviation, hourDesired, minuteDesired, meridiemDesired, zoneDesired);
 							break;
 						}
 					}
@@ -211,6 +293,32 @@ int main()
 					hourInput = validHourInput(timeMethods.getClockType());
 					minuteInput = validMinuteInput();
 					zoneInput = validZoneInput();
+
+					// gets the abbreviation of the time zone for duplicate cases where full time zone names are asked (example: Atlantic Standard Time -> zoneInputAbbreviation = AST)
+					zoneInputAbbreviation.clear();
+					zoneInputLength = zoneInput.length();
+					for (int cnt = 0; cnt < zoneInputLength; cnt++)
+					{
+						if (cnt == 0)
+						{
+							zoneInput[cnt] = toupper(zoneInput[cnt]);
+							placeHolder = zoneInput.substr(cnt, 1);
+							zoneInputAbbreviation += placeHolder;
+
+						}
+						else if (zoneInput[cnt - 1] == ' ')
+						{
+							zoneInput[cnt] = toupper(zoneInput[cnt]);
+							placeHolder = zoneInput.substr(cnt, 1);
+							zoneInputAbbreviation += placeHolder;
+						}
+					}
+
+					// since the above for loop won't make zoneInputAbbreviation correct for non-duplicate time zone cases, this re-sets zoneInputAbbreviation equal to zoneInput which is the correct time zone abbreviation; should not matter in the end though
+					if (zoneInputAbbreviation.length() == 1)
+					{
+						zoneInputAbbreviation = zoneInput;
+					}
 
 					if (timeMethods.searchTime(hourInput, minuteInput, zoneInput) == true)
 					{
@@ -240,7 +348,7 @@ int main()
 							minuteDesired = timeMethods.convertMinuteUTCtoZoneMinute(minuteUTC, zoneDesired);
 							minuteDesired = validConvertedMinute(minuteDesired);
 
-							formatTwentyFourHourClockOutput(hourInput, minuteInput, zoneInput, hourDesired, minuteDesired, zoneDesired);
+							formatTwentyFourHourClockOutput(hourInput, minuteInput, zoneInputAbbreviation, hourDesired, minuteDesired, zoneDesired);
 							break;
 						}
 
@@ -254,7 +362,33 @@ int main()
 						minuteDesired = timeMethods.convertMinuteUTCtoZoneMinute(minuteUTC, zoneDesired);
 						minuteDesired = validConvertedMinute(minuteDesired);
 
-						formatTwentyFourHourClockOutput(hourInput, minuteInput, zoneInput, hourDesired, minuteDesired, zoneDesired);
+						// gets the abbreviation of the time zone for duplicate cases where full time zone names are asked (example: Atlantic Standard Time -> zoneInputAbbreviation = AST)
+						zoneInputAbbreviation.clear();
+						zoneInputLength = zoneInput.length();
+						for (int cnt = 0; cnt < zoneInputLength; cnt++)
+						{
+							if (cnt == 0)
+							{
+								zoneInput[cnt] = toupper(zoneInput[cnt]);
+								placeHolder = zoneInput.substr(cnt, 1);
+								zoneInputAbbreviation += placeHolder;
+
+							}
+							else if (zoneInput[cnt - 1] == ' ')
+							{
+								zoneInput[cnt] = toupper(zoneInput[cnt]);
+								placeHolder = zoneInput.substr(cnt, 1);
+								zoneInputAbbreviation += placeHolder;
+							}
+						}
+
+						// since the above for loop won't make zoneInputAbbreviation correct for non-duplicate time zone cases, this re-sets zoneInputAbbreviation equal to zoneInput which is the correct time zone abbreviation; should not matter in the end though
+						if (zoneInputAbbreviation.length() == 1)
+						{
+							zoneInputAbbreviation = zoneInput;
+						}
+
+						formatTwentyFourHourClockOutput(hourInput, minuteInput, zoneInputAbbreviation, hourDesired, minuteDesired, zoneDesired);
 						break;
 					}
 				}
@@ -379,10 +513,6 @@ int validMinuteInput()
 	return minuteInput;
 }
 
-// need to somehow set the node zone equal to the abbreviation even when duplicate time zone so when saying X:XX AM/PM <FULL ZONE NAME> is stored, the abbreviation is shown instead of the full zone name
-// this would also fix issue with performing the incorrect calculation on converting hours
-// maybe make a second string zone in the node struct to represent the full time zone name so you can still differentiate between two time zones with the same abbreviation
-// then modify the necessary conditions and check the full time zone name for duplicate cases
 string validZoneInput()
 {
 	string zoneInput = "";
@@ -432,59 +562,6 @@ string validZoneInput()
 		getline(cin, zoneInput);
 	}
 	transform(zoneInput.begin(), zoneInput.end(), zoneInput.begin(), ::toupper);
-
-	return zoneInput;
-}
-
-// this function may not be necessary if i figure out how to modify validZoneInput for 'store a time' case and any other case that calls validZoneInput such as getting zone name to convert to or maybe 'delete a time' (maybe 'delete a time' goes with 'store a time' ?)
-string validStoreZoneInput()
-{
-	string zoneInput = "";
-	cout << "Enter the time zone abbreviation: ";
-	getline(cin, zoneInput);
-	transform(zoneInput.begin(), zoneInput.end(), zoneInput.begin(), ::toupper);
-
-	while (zoneInput == "" || zoneInput.find_first_not_of(' ') || noIntegersInZoneName(zoneInput) == false ||
-		(zoneInput != "LINT" && zoneInput != "TOST" &&
-		zoneInput != "CHADT" && zoneInput != "NZDT" && zoneInput != "FJST" && zoneInput != "PHOT" && zoneInput != "TKT" && zoneInput != "TOT" &&
-		zoneInput != "ANAT" && zoneInput != "ANAST" && zoneInput != "FJT" && zoneInput != "GILT" && zoneInput != "M" && zoneInput != "MAGST" && zoneInput != "MHT" && zoneInput != "NFDT" && zoneInput != "NRT" && zoneInput != "NZST" && zoneInput != "PETST" && zoneInput != "PETT" && zoneInput != "TVT" && zoneInput != "WAKT" && zoneInput != "WFT" &&
-		zoneInput != "AEDT" && zoneInput != "KOST" && zoneInput != "L" && zoneInput != "LHDT" && zoneInput != "MAGT" && zoneInput != "NCT" && zoneInput != "NFT" && zoneInput != "PONT" && zoneInput != "SAKT" && zoneInput != "SBT" && zoneInput != "SRET" && zoneInput != "VLAST" && zoneInput != "VUT" &&
-		zoneInput != "ACDT" && zoneInput != "LHST" && zoneInput != "AEST" && zoneInput != "CHUT" && zoneInput != "CHST" && zoneInput != "DDUT" && zoneInput != "K" && zoneInput != "PGT" && zoneInput != "VLAT" && zoneInput != "YAKST" && zoneInput != "YAPT" &&
-		zoneInput != "ACST" && zoneInput != "JST" && zoneInput != "AWDT" && zoneInput != "CHOST" && zoneInput != "I" && zoneInput != "IRKST" && zoneInput != "KST" && zoneInput != "PWT" && zoneInput != "TLT" && zoneInput != "ULAST" && zoneInput != "WIT" && zoneInput != "YAKT" &&
-		zoneInput != "ACWST" && zoneInput != "AWST" && zoneInput != "BNT" && zoneInput != "CAST" && zoneInput != "CHOT" && zoneInput != "H" && zoneInput != "HKT" && zoneInput != "HOVST" && zoneInput != "IRKT" && zoneInput != "KRAST" && zoneInput != "MYT" && zoneInput != "PHT" && zoneInput != "SGT" && zoneInput != "ULAT" && zoneInput != "WITA" &&
-		zoneInput != "WIB" && zoneInput != "CXT" && zoneInput != "DAVT" && zoneInput != "G" && zoneInput != "HOVT" && zoneInput != "ICT" && zoneInput != "KRAT" && zoneInput != "NOVST" && zoneInput != "NOVT" && zoneInput != "OMSST" &&
-		zoneInput != "MMT" && zoneInput != "CCT" && zoneInput != "ALMT" && zoneInput != "BTT" && zoneInput != "F" && zoneInput != "IOT" && zoneInput != "KGT" && zoneInput != "OMST" && zoneInput != "QYZT" && zoneInput != "VOST" && zoneInput != "YEKST" &&
-		zoneInput != "NPT" && zoneInput != "UZT" && zoneInput != "AQTT" && zoneInput != "AZST" && zoneInput != "E" && zoneInput != "MAWT" && zoneInput != "MVT" && zoneInput != "ORAT" && zoneInput != "PKT" && zoneInput != "TFT" && zoneInput != "TJT" && zoneInput != "TMT" && zoneInput != "YEKT" &&
-		zoneInput != "AFT" && zoneInput != "IRDT" && zoneInput != "AZT" && zoneInput != "D" && zoneInput != "GET" && zoneInput != "KUYT" && zoneInput != "MSD" && zoneInput != "MUT" && zoneInput != "RET" && zoneInput != "SAMT" && zoneInput != "SCT" &&
-		zoneInput != "IRST" && zoneInput != "MSK" && zoneInput != "C" && zoneInput != "EAT" && zoneInput != "EEST" && zoneInput != "FET" && zoneInput != "IDT" && zoneInput != "SYOT" && zoneInput != "TRT" &&
-		zoneInput != "EET" && zoneInput != "B" && zoneInput != "CAT" && zoneInput != "CEST" && zoneInput != "SAST" && zoneInput != "WAST" &&
-		zoneInput != "CET" && zoneInput != "A" && zoneInput != "WAT" && zoneInput != "WEST" &&
-		zoneInput != "GMT" && zoneInput != "AZOST" && zoneInput != "EGST" && zoneInput != "WET" && zoneInput != "WT" && zoneInput != "Z" &&
-		zoneInput != "CVT" && zoneInput != "AZOT" && zoneInput != "EGT" && zoneInput != "N" &&
-		zoneInput != "BRST" && zoneInput != "FNT" && zoneInput != "O" && zoneInput != "PMDT" && zoneInput != "UYST" && zoneInput != "WGST" &&
-		zoneInput != "ART" && zoneInput != "BRT" && zoneInput != "CLST" && zoneInput != "FKST" && zoneInput != "GFT" && zoneInput != "P" && zoneInput != "PMST" && zoneInput != "PYST" && zoneInput != "ROTT" && zoneInput != "SRT" && zoneInput != "UYT" && zoneInput != "WARST" && zoneInput != "WGT" && zoneInput != "NST" &&
-		zoneInput != "VET" && zoneInput != "BOT" && zoneInput != "CIDST" && zoneInput != "CLT" && zoneInput != "EDT" && zoneInput != "FKT" && zoneInput != "GYT" && zoneInput != "PYT" && zoneInput != "Q" &&
-		zoneInput != "EST" && zoneInput != "ACT" && zoneInput != "CIST" && zoneInput != "COT" && zoneInput != "EASST" && zoneInput != "ECT" && zoneInput != "PET" && zoneInput != "R" &&
-		zoneInput != "EAST" && zoneInput != "GALT" && zoneInput != "MDT" && zoneInput != "S" &&
-		zoneInput != "MST" && zoneInput != "PDT" && zoneInput != "T" &&
-		zoneInput != "PST" && zoneInput != "AKDT" && zoneInput != "U" &&
-		zoneInput != "AKST" && zoneInput != "GAMT" && zoneInput != "HDT" && zoneInput != "V" && zoneInput != "MART" &&
-		zoneInput != "HST" && zoneInput != "CKT" && zoneInput != "TAHT" && zoneInput != "W" &&
-		zoneInput != "NUT" && zoneInput != "SST" && zoneInput != "X" &&
-		zoneInput != "AoE" && zoneInput != "Y" &&
-		zoneInput != "BST" && zoneInput != "CST" && zoneInput != "IST" && zoneInput != "WST" && zoneInput != "AMST" && zoneInput != "GST" && zoneInput != "ADT" && zoneInput != "AMT" && zoneInput != "AST" && zoneInput != "CDT")
-		)
-	{
-		cout << endl << "Error: Abbreviation was too long (maximum of 5 characters), blank characters were found, integers were found, or abbreviation does not exist." << endl;
-		cout << endl << "Enter the time zone abbrevation: ";
-		getline(cin, zoneInput);
-		transform(zoneInput.begin(), zoneInput.end(), zoneInput.begin(), ::toupper);
-	}
-
-	if (zoneInput == "BST" || zoneInput == "CST" || zoneInput == "IST" || zoneInput == "WST" || zoneInput == "AMST" || zoneInput == "GST" || zoneInput == "ADT" || zoneInput == "AMT" || zoneInput == "AST" || zoneInput == "CDT")
-	{
-		zoneInput = validDuplicateTimeZone(zoneInput, zoneInput);
-	}
 
 	return zoneInput;
 }
@@ -629,7 +706,8 @@ string validDuplicateTimeZone(string zoneDesired, string tempZone)
 			(zoneDesired != "West Samoa Time" && zoneDesired != "Bougainville Standard Time" && zoneDesired != "China Standard Time" && zoneDesired != "Bangladesh Standard Time" && zoneDesired != "India Standard Time" && zoneDesired != "Armenia Summer Time"
 			&& zoneDesired != "Gulf Standard Time" && zoneDesired != "Arabia Daylight Time" && zoneDesired != "Armenia Time" && zoneDesired != "Arabia Standard Time" && zoneDesired != "Israel Standard Time" && zoneDesired != "British Summer Time"
 			&& zoneDesired != "Irish Standard Time" && zoneDesired != "Western Sahara Summer Time" && zoneDesired != "South Georgia Time" && zoneDesired != "Atlantic Daylight Time" && zoneDesired != "Amazon Summer Time" && zoneDesired != "Amazon Time"
-			&& zoneDesired != "Atlantic Standard Time" && zoneDesired != "Cuba Daylight Time" && zoneDesired != "Central Daylight Time" && zoneDesired != "Cuba Standard Time" && zoneDesired != "Central Standard Time"))
+			&& zoneDesired != "Atlantic Standard Time" && zoneDesired != "Cuba Daylight Time" && zoneDesired != "Central Daylight Time" && zoneDesired != "Cuba Standard Time" && zoneDesired != "Central Standard Time")
+		  )
 	{
 		cout << endl << "Error: Time zone name does not exist, blank characters were found, or integers were found." << endl;
 		cout << endl << "Enter the full time zone name for " << tempZone << ": ";
