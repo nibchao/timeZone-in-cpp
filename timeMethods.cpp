@@ -8,7 +8,8 @@
 #include <string>
 #include "timeMethods.h"
 
-using namespace std;
+using std::cout;
+using std::endl;
 
 timeMethods::~timeMethods()
 {
@@ -76,11 +77,11 @@ void timeMethods::deleteTime(int hourInput, int minuteInput, string meridiemInpu
 		delete(currentNode);
 		if (minuteInput < 10)
 		{
-			cout << hourInput << ":0" << minuteInput << " " << meridiemInput << " " << currentNode->zone << " has been deleted." << endl << endl;
+			cout << hourInput << ":0" << minuteInput << " " << meridiemInput << " " << zoneInput << " has been deleted." << endl << endl;
 		}
 		else
 		{
-			cout << hourInput << ":" << minuteInput << " " << meridiemInput << " " << currentNode->zone << " has been deleted." << endl << endl;
+			cout << hourInput << ":" << minuteInput << " " << meridiemInput << " " << zoneInput << " has been deleted." << endl << endl;
 		}
 		return;
 	}
@@ -102,11 +103,11 @@ void timeMethods::deleteTime(int hourInput, int minuteInput, string meridiemInpu
 
 	if (minuteInput < 10)
 	{
-		cout << hourInput << ":0" << minuteInput << " " << meridiemInput << " " << currentNode->zone << " has been deleted." << endl << endl;
+		cout << hourInput << ":0" << minuteInput << " " << meridiemInput << " " << zoneInput << " has been deleted." << endl << endl;
 	}
 	else
 	{
-		cout << hourInput << ":" << minuteInput << " " << meridiemInput << " " << currentNode->zone << " has been deleted." << endl << endl;
+		cout << hourInput << ":" << minuteInput << " " << meridiemInput << " " << zoneInput << " has been deleted." << endl << endl;
 	}
 }
 
@@ -220,22 +221,22 @@ void timeMethods::deleteTime(int hourInput, int minuteInput, string zoneInput)
 		{
 			if (minuteInput < 10)
 			{
-				cout << "0" << hourInput << ":0" << minuteInput << " " << currentNode->zone << " has been deleted." << endl << endl;
+				cout << "0" << hourInput << ":0" << minuteInput << " " << zoneInput << " has been deleted." << endl << endl;
 			}
 			else
 			{
-				cout << "0" << hourInput << ":" << minuteInput << " " << currentNode->zone << " has been deleted." << endl << endl;
+				cout << "0" << hourInput << ":" << minuteInput << " " << zoneInput << " has been deleted." << endl << endl;
 			}
 		}
 		else
 		{
 			if (minuteInput < 10)
 			{
-				cout << hourInput << ":0" << minuteInput << " " << currentNode->zone << " has been deleted." << endl << endl;
+				cout << hourInput << ":0" << minuteInput << " " << zoneInput << " has been deleted." << endl << endl;
 			}
 			else
 			{
-				cout << hourInput << ":" << minuteInput << " " << currentNode->zone << " has been deleted." << endl << endl;
+				cout << hourInput << ":" << minuteInput << " " << zoneInput << " has been deleted." << endl << endl;
 			}
 		}
 		return;
@@ -260,22 +261,22 @@ void timeMethods::deleteTime(int hourInput, int minuteInput, string zoneInput)
 	{
 		if (minuteInput < 10)
 		{
-			cout << "0" << hourInput << ":0" << minuteInput << " " << currentNode->zone << " has been deleted." << endl << endl;
+			cout << "0" << hourInput << ":0" << minuteInput << " " << zoneInput << " has been deleted." << endl << endl;
 		}
 		else
 		{
-			cout << "0" << hourInput << ":" << minuteInput << " " << currentNode->zone << " has been deleted." << endl << endl;
+			cout << "0" << hourInput << ":" << minuteInput << " " << zoneInput << " has been deleted." << endl << endl;
 		}
 	}
 	else
 	{
 		if (minuteInput < 10)
 		{
-			cout << hourInput << ":0" << minuteInput << " " << currentNode->zone << " has been deleted." << endl << endl;
+			cout << hourInput << ":0" << minuteInput << " " << zoneInput << " has been deleted." << endl << endl;
 		}
 		else
 		{
-			cout << hourInput << ":" << minuteInput << " " << currentNode->zone << " has been deleted." << endl << endl;
+			cout << hourInput << ":" << minuteInput << " " << zoneInput << " has been deleted." << endl << endl;
 		}
 	}
 }
