@@ -87,74 +87,72 @@ int main()
 		switch (menuChoice)
 		{
 			case 1: // store a time
+				cout << "===Storing time in " << clockType << "-Hour Clock Type===" << endl;
+
+				hourInput = validHourInput(clockType);
+				minuteInput = validMinuteInput();
+
 				if (clockType == TWELVE_HOUR_CLOCK)
 				{
-					cout << "===Storing time in " << clockType << "-Hour Clock Type===" << endl;
-
-					hourInput = validHourInput(clockType);
-					minuteInput = validMinuteInput();
-
 					meridiemInput = validMeridiemInput();
-
-					zoneInput = validZoneInput();
-					zoneInputAbbreviation = getZoneAbbreviation(zoneInput);
-
-					timeMethods.storeTime(hourInput, minuteInput, meridiemInput, zoneInputAbbreviation, zoneInput);
 				}
-				else
+
+				zoneInput = validZoneInput();
+				zoneInputAbbreviation = getZoneAbbreviation(zoneInput);
+
+				if (clockType == TWELVE_HOUR_CLOCK)
 				{
-					cout << "===Storing time in " << clockType << "-Hour Clock Type===" << endl;
-
-					hourInput = validHourInput(clockType);
-					minuteInput = validMinuteInput();
-
-					zoneInput = validZoneInput();
-					zoneInputAbbreviation = getZoneAbbreviation(zoneInput);
-
-					timeMethods.storeTime(hourInput, minuteInput, zoneInputAbbreviation, zoneInput);
+					timeMethods.storeTime(hourInput, minuteInput, meridiemInput, zoneInputAbbreviation, zoneInput);
+					break;
 				}
+
+				timeMethods.storeTime(hourInput, minuteInput, zoneInputAbbreviation, zoneInput);
 				break;
 			case 2: // delete a time
+				cout << "===Enter the time to delete===" << endl;
+
+				hourInput = validHourInput(clockType);
+				minuteInput = validMinuteInput();
+
 				if (clockType == TWELVE_HOUR_CLOCK)
 				{
-					cout << endl;
-					hourInput = validHourInput(clockType);
-					minuteInput = validMinuteInput();
-
 					meridiemInput = validMeridiemInput();
-
-					zoneInput = validZoneInput();
-
-					timeMethods.deleteTime(hourInput, minuteInput, meridiemInput, zoneInput);
 				}
-				else
+
+				zoneInput = validZoneInput();
+
+				if (clockType == TWELVE_HOUR_CLOCK)
 				{
-					cout << endl;
-					hourInput = validHourInput(clockType);
-					minuteInput = validMinuteInput();
-
-					zoneInput = validZoneInput();
-
-					timeMethods.deleteTime(hourInput, minuteInput, zoneInput);
+					timeMethods.deleteTime(hourInput, minuteInput, meridiemInput, zoneInput); // probably want to add the 'zoneAbbreviation code' in both deleteTime functions so that the abbreviation is outputted instead of the full zone name for duplicate time zone cases
+					break;
 				}
+
+				timeMethods.deleteTime(hourInput, minuteInput, zoneInput);
 				break;
 			case 3: // convert a time to another time zone
+				cout << "===Enter the the time to convert===" << endl;
+				hourInput = validHourInput(clockType); // gets the hours of the time to find
+				minuteInput = validMinuteInput(); // gets the minutes of the time to find
+
 				if (clockType == TWELVE_HOUR_CLOCK)
 				{
-					cout << "===Enter the hours, minutes, meridiem, and time zone abbreviation of the time to convert===" << endl;
-					hourInput = validHourInput(clockType);
-					minuteInput = validMinuteInput();
+					meridiemInput = validMeridiemInput(); // gets the meridiem of the time to find
+				}
 
-					meridiemInput = validMeridiemInput();
+				zoneInput = validZoneInput(); // gets the zone abbreviation for non duplicate zones and gets the full zone for duplicate zones
+				zoneInputAbbreviation = getZoneAbbreviation(zoneInput); // gets the abbreviation for duplicate and non duplicate zones (for non duplicate case, resets zoneInputAbbreviation equal to zoneInput)
 
-					zoneInput = validZoneInput();
-					zoneInputAbbreviation = getZoneAbbreviation(zoneInput);
 
-					searchTime = timeMethods.searchTime(hourInput, minuteInput, meridiemInput, zoneInput);
+				// need to make below code work first then can figure out how to remove duplicate lines of code and make more condensed like above
+
+
+				if (clockType == TWELVE_HOUR_CLOCK)
+				{
+					searchTime = timeMethods.searchTime(hourInput, minuteInput, meridiemInput, zoneInput); // looks for a node with the inputs from above; for duplicate zones, uses the full zone name to find the node instead of the abbreviation
 
 					if (searchTime)
 					{
-						cout << "===Input the time zone abbreviation to convert the time to===" << endl;
+						cout << "===Input the time zone abbreviation to convert to===" << endl;
 						zoneDesired = validZoneInput();
 						tempZoneInput = zoneDesired;
 
@@ -164,7 +162,30 @@ int main()
 							break;
 						}
 
-						if (zoneDesired == "BST" || zoneDesired == "CST" || zoneDesired == "IST" || zoneDesired == "WST" || zoneDesired == "AMST" || zoneDesired == "GST" || zoneDesired == "ADT" || zoneDesired == "AMT" || zoneDesired == "AST" || zoneDesired == "CDT") // Duplicate Zone Abbreviation Case
+						if (zoneInputAbbreviation == "BST" || zoneInputAbbreviation == "CST" || zoneInputAbbreviation == "IST" || zoneInputAbbreviation == "WST" || zoneInputAbbreviation == "AMST" || zoneInputAbbreviation == "GST" || zoneInputAbbreviation == "ADT" || zoneInputAbbreviation == "AMT" || zoneInputAbbreviation == "AST" || zoneInputAbbreviation == "CDT") // this addresses the converting of a duplicate time zone to a time zone
+						{
+							hourUTC = timeMethods.HourToUTCDuplicateAbbreviation(hourInput, zoneInput);
+							tempHourUTC = hourUTC;
+							hourUTC = validConvertedHour(hourUTC, clockType);
+
+							minuteUTC = timeMethods.MinuteToUTC(minuteInput, zoneInput);
+							minuteUTC = validConvertedMinute(minuteUTC);
+
+							hourDesired = timeMethods.convertHourUTCtoZoneHour(tempHourUTC, zoneDesired);
+							tempHourDesired = hourDesired;
+
+							meridiemDesired = getMeridiemDesired(tempHourDesired);
+
+							hourDesired = validConvertedHour(hourDesired, clockType);
+
+							minuteDesired = timeMethods.convertMinuteUTCtoZoneMinute(minuteUTC, zoneDesired);
+							minuteDesired = validConvertedMinute(minuteDesired);
+
+							formatTwelveHourClockOutput(hourInput, minuteInput, meridiemInput, zoneInputAbbreviation, hourDesired, minuteDesired, meridiemDesired, zoneDesired);
+							break;
+						}
+
+						if (zoneDesired == "BST" || zoneDesired == "CST" || zoneDesired == "IST" || zoneDesired == "WST" || zoneDesired == "AMST" || zoneDesired == "GST" || zoneDesired == "ADT" || zoneDesired == "AMT" || zoneDesired == "AST" || zoneDesired == "CDT") // this addresses the converting of a time zone to a duplicate time zone
 						{
 							zoneDesired = validDuplicateTimeZone(zoneDesired, tempZoneInput);
 
@@ -188,10 +209,11 @@ int main()
 							formatTwelveHourClockOutput(hourInput, minuteInput, meridiemInput, zoneInputAbbreviation, hourDesired, minuteDesired, meridiemDesired, zoneDesired);
 							break;
 						}
-						else // Every Other Time Zone
+						// need to make another case that addresses the converting of a duplicate time zone to a duplicate time zone
+						else // this addresses the converting of a time zone to any non duplicate time zone
 						{
-							hourUTC = timeMethods.HourToUTC(hourInput, zoneInputAbbreviation); // 11:00 AM AST (Atlantic Standard Time) -> 6:00 AM EST (Eastern Standard Time); need to add duplicate time zone abbreviation cases to all XToUTC functions and convertXUTCtoZoneHour/Minute functions
-																							   // need to apply the fix to this to every conversion case (12-hour duplicate/not duplicate, 24-hour duplicate/not duplicate)
+							hourUTC = timeMethods.HourToUTC(hourInput, zoneInputAbbreviation);
+
 							tempHourUTC = hourUTC;
 							hourUTC = validConvertedHour(hourUTC, clockType);
 
@@ -215,18 +237,11 @@ int main()
 				}
 				else // 24-Hour Clock Case
 				{
-					cout << "Input the hours, minutes, and time zone abbreviation of the time to convert." << endl << endl;
-					hourInput = validHourInput(clockType);
-					minuteInput = validMinuteInput();
-					zoneInput = validZoneInput();
-
-					zoneInputAbbreviation = getZoneAbbreviation(zoneInput);
-
 					searchTime = timeMethods.searchTime(hourInput, minuteInput, zoneInput);
 
 					if (searchTime)
 					{
-						cout << "Input the time zone abbreviation to convert the time to:" << endl << endl;
+						cout << "===Input the time zone abbreviation to convert to===" << endl << endl;
 						zoneDesired = validZoneInput();
 						tempZoneInput = zoneDesired;
 
