@@ -628,6 +628,7 @@ int timeMethods::MinuteToUTC(int minuteInput, string zoneInput)
 	return convertedMinutes;
 }
 
+// need to go through this function and remove duplicate abbreviation cases because convertHourUTCtoZoneHourDuplicateAbbreviation should be used instead for those cases
 int timeMethods::convertHourUTCtoZoneHour(int hourUTC, string desiredZone)
 {
 	int convertedHours = hourUTC;
