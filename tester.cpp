@@ -24,7 +24,7 @@ const int MAX_MINUTE_VALUE = 60;
 const int MAX_ZONE_ABBREVIATION_LENGTH = 5;
 const int MERIDIEM_ABBREVIATION_LENGTH = 2;
 
-// function prototypes
+// FUNCTION PROTOTYPES //
 int displayMenu(int);
 
 int validHourInput(int);
@@ -49,7 +49,7 @@ string getMeridiemDesired(int);
 
 int main()
 {
-	// variables to be used in program
+	// INITIALIZATION OF PROGRAM VARIABLES //
 	int menuChoice = 0;
 
 	int hourInput = 0;
@@ -74,7 +74,6 @@ int main()
 	string zoneInputAbbreviation = "";
 
 	bool searchTime = NULL;
-
 	//
 
 	timeMethods timeMethods;
@@ -86,7 +85,8 @@ int main()
 
 		switch (menuChoice)
 		{
-			case 1: // store a time
+			// STORE TIME  //
+			case 1:
 				cout << "===Storing time in " << clockType << "-Hour Clock Type===" << endl;
 
 				hourInput = validHourInput(clockType);
@@ -108,7 +108,10 @@ int main()
 
 				timeMethods.storeTime(hourInput, minuteInput, zoneInputAbbreviation, zoneInput);
 				break;
-			case 2: // delete a time
+
+
+			// DELETE TIME //
+			case 2:
 				cout << "===Enter the time to delete===" << endl;
 
 				hourInput = validHourInput(clockType);
@@ -129,7 +132,10 @@ int main()
 
 				timeMethods.deleteTime(hourInput, minuteInput, zoneInput);
 				break;
-			case 3: // convert a time to another time zone
+
+
+			// CONVERT TIME //
+			case 3:
 				cout << "===Enter the the time to convert===" << endl;
 				hourInput = validHourInput(clockType); // gets the hours of the time to find
 				minuteInput = validMinuteInput(); // gets the minutes of the time to find
@@ -144,7 +150,8 @@ int main()
 
 
 				// need to make below code work first then can figure out how to remove duplicate lines of code and make more condensed like above
-
+				// CAN EASILY BREAK EACH OF THE "ADDRESSES THE CONVERTING OF" INTO SEPARATE FUNCTIONS
+				// however, this may not be possible since there are many functions used in timeMethods that cannot be used in functions outside of this main function such as timeMethods.HourToUTCDuplicateAbbreviation
 
 				if (clockType == TWELVE_HOUR_CLOCK)
 				{
@@ -161,7 +168,6 @@ int main()
 							break;
 						}
 
-						// doesn't work, 1:10 AM AST (atlantic standard time) -> 5:10 AM CST (central standard time) is wrong; should be 11:10 PM CST
 						// this addresses the converting of a duplicate time zone to a duplicate time zone
 						if ((zoneInputAbbreviation == "BST" || zoneInputAbbreviation == "CST" || zoneInputAbbreviation == "IST" || zoneInputAbbreviation == "WST" || zoneInputAbbreviation == "AMST" || zoneInputAbbreviation == "GST" || zoneInputAbbreviation == "ADT" || zoneInputAbbreviation == "AMT" || zoneInputAbbreviation == "AST" || zoneInputAbbreviation == "CDT")
 							&& (zoneDesired == "West Samoa Time" || zoneDesired == "Bougainville Standard Time" || zoneDesired == "China Standard Time" || zoneDesired == "Bangladesh Standard Time" || zoneDesired == "India Standard Time" || zoneDesired == "Armenia Summer Time"
@@ -169,17 +175,18 @@ int main()
 								|| zoneDesired == "Irish Standard Time" || zoneDesired == "Western Sahara Summer Time" || zoneDesired == "South Georgia Time" || zoneDesired == "Atlantic Daylight Time" || zoneDesired == "Amazon Summer Time" || zoneDesired == "Amazon Time"
 								|| zoneDesired == "Atlantic Standard Time" || zoneDesired == "Cuba Daylight Time" || zoneDesired == "Central Daylight Time" || zoneDesired == "Cuba Standard Time" || zoneDesired == "Central Standard Time"))
 						{
-							hourUTC = timeMethods.HourToUTCDuplicateAbbreviation(hourInput, zoneInput); // hourUTC is 5
-							tempHourUTC = hourUTC; // tempHourUTC is 5
-							hourUTC = validConvertedHour(hourUTC, clockType); // hourUTC is still 5
+							hourUTC = timeMethods.HourToUTCDuplicateAbbreviation(hourInput, zoneInput);
+							tempHourUTC = hourUTC;
+							hourUTC = validConvertedHour(hourUTC, clockType);
 
-							minuteUTC = timeMethods.MinuteToUTC(minuteInput, zoneInputAbbreviation); // minuteUTC is 10
-							minuteUTC = validConvertedMinute(minuteUTC); // minuteUTC is still 10
+							minuteUTC = timeMethods.MinuteToUTC(minuteInput, zoneInputAbbreviation);
+							minuteUTC = validConvertedMinute(minuteUTC);
 
-							hourDesired = timeMethods.convertHourUTCtoZoneHourDuplicateAbbreviation(tempHourUTC, zoneDesired); // hourDesired is -1
-							tempHourDesired = hourDesired; // tempHourDesired is -1
+							hourDesired = timeMethods.convertHourUTCtoZoneHourDuplicateAbbreviation(tempHourUTC, zoneDesired);
 
-							meridiemDesired = getMeridiemDesired(tempHourDesired); // meridiemDesired is AM
+							tempHourDesired = hourDesired;
+
+							meridiemDesired = getMeridiemDesired(tempHourDesired);
 
 							hourDesired = validConvertedHour(hourDesired, clockType);
 
@@ -317,10 +324,16 @@ int main()
 					}
 				}
 				break;
-			case 4: // display times stored
+
+
+			// DISPLAY STORED TIMES //
+			case 4:
 				timeMethods.displayStoredTimes();
 				break;
-			case 5: // choose between 12-hour clock and 24-hour clock
+
+
+			// SELECT 12-HOUR CLOCK OR 24-HOUR CLOCK //
+			case 5:
 				clockType = validClockType(timeMethods.isEmpty());
 
 				if (clockType == TWELVE_HOUR_CLOCK)
@@ -333,14 +346,23 @@ int main()
 				}
 				cout << endl;
 				break;
-			case 6: // exit
+
+
+			// EXIT PROGRAM //
+			case 6:
 				cout << "Exiting program.";
 				break;
-			case 999: // destructor option
+
+
+			// DESTRUCTOR OPTION //
+			case 999:
 				timeMethods.~timeMethods();
 				cout << endl << "Deleted all stored times." << endl << endl;
 				break;
-			default: // default case
+
+
+			// DEFAULT CASE FOR INVALID INPUT //
+			default:
 				cout << endl << "Input out of bounds. Enter any key to return." << endl;
 				cin.clear();
 				cin.ignore(10000, '\n');
@@ -542,7 +564,8 @@ int validConvertedHour(int hourInput, int clockType)
 	{
 		if (hourInput < 0)
 		{
-			hourInput = hourInput * -1;
+			hourInput = clockType + hourInput;
+			//hourInput = hourInput * -1;
 		}
 		if (hourInput == 0)
 		{
@@ -777,12 +800,11 @@ string getMeridiemDesired(int tempHourDesired)
 {
 	string meridiemDesired = "";
 
-	if (tempHourDesired < 0)
+	if (tempHourDesired < 0 && ((abs(tempHourDesired) % 24) < 12))
 	{
-		tempHourDesired *= -1;
+		meridiemDesired = "PM";
 	}
-
-	if ((tempHourDesired % 24) > 12)
+	else if ((tempHourDesired % 24) > 12)
 	{
 		meridiemDesired = "PM";
 	}
@@ -792,4 +814,45 @@ string getMeridiemDesired(int tempHourDesired)
 	}
 
 	return meridiemDesired;
+}
+
+// basic idea of what the duplicate to duplicate would look like, but this may not be possible to implement with how my code is broken up at the moment
+// if i figure out how to do this, then i can easily apply the concept to the other 3 duplicate related conversion cases
+void duplicateToDuplicate(int hourInput, int minuteInput, string meridiemInput, string zoneInputAbbreviation)
+{
+	int hourDesired = 0;
+	int minuteDesired = 0;
+	string meridiemDesired = "";
+	string zoneDesired = "";
+	//// this addresses the converting of a duplicate time zone to a duplicate time zone
+	//if ((zoneInputAbbreviation == "BST" || zoneInputAbbreviation == "CST" || zoneInputAbbreviation == "IST" || zoneInputAbbreviation == "WST" || zoneInputAbbreviation == "AMST" || zoneInputAbbreviation == "GST" || zoneInputAbbreviation == "ADT" || zoneInputAbbreviation == "AMT" || zoneInputAbbreviation == "AST" || zoneInputAbbreviation == "CDT")
+	//	&& (zoneDesired == "West Samoa Time" || zoneDesired == "Bougainville Standard Time" || zoneDesired == "China Standard Time" || zoneDesired == "Bangladesh Standard Time" || zoneDesired == "India Standard Time" || zoneDesired == "Armenia Summer Time"
+	//		|| zoneDesired == "Gulf Standard Time" || zoneDesired == "Arabia Daylight Time" || zoneDesired == "Armenia Time" || zoneDesired == "Arabia Standard Time" || zoneDesired == "Israel Standard Time" || zoneDesired == "British Summer Time"
+	//		|| zoneDesired == "Irish Standard Time" || zoneDesired == "Western Sahara Summer Time" || zoneDesired == "South Georgia Time" || zoneDesired == "Atlantic Daylight Time" || zoneDesired == "Amazon Summer Time" || zoneDesired == "Amazon Time"
+	//		|| zoneDesired == "Atlantic Standard Time" || zoneDesired == "Cuba Daylight Time" || zoneDesired == "Central Daylight Time" || zoneDesired == "Cuba Standard Time" || zoneDesired == "Central Standard Time"))
+	//{
+	//	hourUTC = timeMethods.HourToUTCDuplicateAbbreviation(hourInput, zoneInput);
+	//	tempHourUTC = hourUTC;
+	//	hourUTC = validConvertedHour(hourUTC, clockType);
+
+	//	minuteUTC = timeMethods.MinuteToUTC(minuteInput, zoneInputAbbreviation);
+	//	minuteUTC = validConvertedMinute(minuteUTC);
+
+	//	hourDesired = timeMethods.convertHourUTCtoZoneHourDuplicateAbbreviation(tempHourUTC, zoneDesired);
+
+	//	tempHourDesired = hourDesired;
+
+	//	meridiemDesired = getMeridiemDesired(tempHourDesired);
+
+	//	hourDesired = validConvertedHour(hourDesired, clockType);
+
+	//	minuteDesired = timeMethods.convertMinuteUTCtoZoneMinute(minuteUTC, zoneDesired);
+	//	minuteDesired = validConvertedMinute(minuteDesired);
+
+	//	formatTwelveHourClockOutput(hourInput, minuteInput, meridiemInput, zoneInputAbbreviation, hourDesired, minuteDesired, meridiemDesired, zoneDesired);
+	//	break;
+	//}
+	
+	// somehow use the functions from timeMethods.cpp to do the appropriate calculations
+	formatTwelveHourClockOutput(hourInput, minuteInput, meridiemInput, zoneInputAbbreviation, hourDesired, minuteDesired, meridiemDesired, zoneDesired);
 }
